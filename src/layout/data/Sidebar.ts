@@ -5,11 +5,8 @@ import {
   IconUser,
   IconBusinessplan,
   IconUsersGroup,
-  IconChefHat,
   IconChartBar,
   IconChartPie,
-  IconArrowRightCircle,
-  IconArrowRightBar,
   IconArrowRightFromArc,
 } from "@tabler/icons-react";
 import { type ComponentType } from "react";
@@ -24,7 +21,7 @@ export interface SidebarItem {
   id: string;
   label: string;
   path: string;
-  icon: ComponentType<{ size?: number; stroke?: number }>;
+  icon: ComponentType<{ size?: number; stroke?: number; className?: string}>;
   expandable?: boolean;
   addButton?: boolean;
   subItems?: SidebarSubItem[];
