@@ -1,6 +1,6 @@
 import { useState, type FC } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
-  IconBell,
   IconPlus,
   IconMinus,
   IconChevronLeft,
@@ -9,8 +9,6 @@ import {
 import { sidebarData, type SidebarItem, type SidebarSubItem } from "./data/Sidebar";
 
 interface SidebarProps {
-  activePath?: string;
-  onNavigate?: (path: string) => void;
   onAdd?: (itemId: string) => void;
   title?: string;
   className?: string;
@@ -84,7 +82,11 @@ const Item: FC<{
                 onClick={(e) => { e.stopPropagation(); onToggleExpand(); }}
                 className="p-1 rounded-md transition-colors"
               >
-                {isExpanded ? <IconMinus size={16} stroke={2} /> : <IconPlus size={16} stroke={2} />}
+                {isExpanded ? (
+                  <IconMinus size={16} stroke={2} className="text-gray-500" />
+                ) : (
+                  <IconPlus size={16} stroke={2} className="text-gray-500" />
+                )}
               </button>
             )}
           </div>
@@ -108,12 +110,14 @@ const Item: FC<{
 };
 
 export const Sidebar: FC<SidebarProps> = ({
-  activePath = "",
-  onNavigate,
   onAdd,
   title,
   className = "",
 }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const activePath = location.pathname;
+
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -129,6 +133,10 @@ export const Sidebar: FC<SidebarProps> = ({
     });
   };
 
+  const handleNavigate = (path: string) => {
+    navigate(path);
+  };
+
   const mainItems = sidebarData.sections[0]?.items.filter((item) => item.id !== "log-out") || [];
   const logOutItem = sidebarData.sections[0]?.items.find((item) => item.id === "log-out");
 
@@ -140,17 +148,31 @@ export const Sidebar: FC<SidebarProps> = ({
       `}
     >
       {/* Header */}
-      <div className={`flex items-center border-b border-gray-100 py-4 ${isCollapsed ? "justify-center px-2" : "justify-between px-4"}`}>
-        {!isCollapsed && (
+      <div
+        className={`
+          h-[65px] flex items-center justify-between border-b border-gray-100
+          ${isCollapsed ? "justify-center px-2" : "px-4"}
+        `}
+      >
+        {!isCollapsed ? (
           <>
             <h1 className="text-base font-semibold text-gray-800">
               {title || sidebarData.title}
             </h1>
-            <button className="p-2 rounded-lg hover:bg-gray-100 relative">
-              <IconBell size={18} stroke={1.5} className="text-gray-500" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-emerald-500 rounded-full" />
+            <button
+              onClick={() => setIsCollapsed(true)}
+              className="p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-500"
+            >
+              <IconChevronLeft size={18} stroke={1.5} />
             </button>
           </>
+        ) : (
+          <button
+            onClick={() => setIsCollapsed(false)}
+            className="p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-500"
+          >
+            <IconChevronRight size={18} stroke={1.5} />
+          </button>
         )}
       </div>
 
@@ -164,7 +186,7 @@ export const Sidebar: FC<SidebarProps> = ({
             isCollapsed={isCollapsed}
             activeSubPath={activePath}
             onToggleExpand={() => toggleExpand(item.id)}
-            onNavigate={(path) => onNavigate?.(path)}
+            onNavigate={handleNavigate}
             onAdd={(id) => onAdd?.(id)}
           />
         ))}
@@ -178,27 +200,9 @@ export const Sidebar: FC<SidebarProps> = ({
             isExpanded={false}
             isCollapsed={isCollapsed}
             onToggleExpand={() => {}}
-            onNavigate={(path) => onNavigate?.(path)}
+            onNavigate={handleNavigate}
           />
         )}
-
-        <button
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className={`
-            flex items-center gap-3 py-2.5 mx-2 rounded-xl w-[calc(100%-16px)]
-            text-gray-500 hover:bg-gray-50
-            ${isCollapsed ? "px-2 justify-center" : "px-3"}
-          `}
-        >
-          {isCollapsed ? (
-            <IconChevronRight size={18} stroke={1.5} />
-          ) : (
-            <>
-              <IconChevronLeft size={18} stroke={1.5} />
-              <span className="text-xs font-medium">Ocultar</span>
-            </>
-          )}
-        </button>
       </div>
     </aside>
   );

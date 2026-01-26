@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import Img from '../../assets/bg/login.png'
-import { FloatingInput } from '../../components/common/FloatingInput';
-import { IconEye, IconEyeOff, IconUser } from '@tabler/icons-react';
+import Input from '../../components/ui/FloatingInput';
+import { IconArrowRight, IconEye, IconEyeOff, IconUser } from '@tabler/icons-react';
+import Button from '../../components/ui/Button';
 
 const Login = () => {
 
@@ -25,42 +26,22 @@ const Login = () => {
             </span>
           </div>
           <div className='w-full flex flex-col gap-6'>
-            <FloatingInput
+            <Input
               label="Usuario"
-              icon={<IconUser />}
-              iconPosition="right"
-              variant='filled'
-              fullWidth
-              colors={{
-                label: '#4B5563',
-                labelActive: '#059669',
-                border: '#D1D5DB',
-                borderFocus: 'none',
-                icon: '#4B5563',
-                iconFocus: '#059669',
-              }}
+              icon={<IconUser size={20} />}
+              //iconPosition="right"
+              type="text"
             />
             <div>
-              <FloatingInput
-                label="Contraseña"
-                type={showPassword ? "text" : "password"}
-                endIcon={
-                  <div onClick={() => setShowPassword(!showPassword)}>
+              <Input
+                  label="Contraseña"
+                  icon={<div onClick={() => setShowPassword(!showPassword)}>
                     {showPassword ? <IconEyeOff /> : <IconEye />}
-                  </div>
-                }
-                variant='filled'
-                fullWidth
-                size='md'
-                colors={{
-                  label: '#4B5563',
-                  labelActive: '#059669',
-                  border: '#D1D5DB',
-                  borderFocus: 'none',
-                  icon: '#4B5563',
-                  iconFocus: '#059669',
-                }}
-              />
+                  </div>}
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  clickableIcon={true}
+                />
               <span className='text-xs text-gray-600 font-normal'>
                 ¿Olvidaste tu contraseña? <a href="#" className='italic underline'>Restablezcala aquí.</a>
               </span>
@@ -68,9 +49,9 @@ const Login = () => {
             
           </div>
           <div className='w-full opacity-90'>
-            <button className='cursor-pointer w-full bg-linear-90 from-emerald-800 via-green-500 to-lime-400 rounded-md py-5 uppercase text-center text-base font-semibold text-white'>
+            <Button disabled variant="gradient" icon={<IconArrowRight size={18} />} iconPosition="right" className='opacity-50 hover:opacity-50! active:scale-100! cursor-not-allowed'>
               Ingresar
-            </button>
+            </Button>
           </div>
           <div className='text-gray-600 text-xs font-normal'>
             Daniela Brunetto &copy; {year}; Todos los derechos reservados.

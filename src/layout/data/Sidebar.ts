@@ -2,7 +2,7 @@ import {
   IconLayoutDashboard,
   IconSettings,
   IconBowlSpoon,
-  IconUser,
+  IconUsers,
   IconBusinessplan,
   IconUsersGroup,
   IconChartBar,
@@ -77,13 +77,13 @@ export const sidebarData: SidebarData = {
           id: "clients",
           label: "Clientes",
           path: "/clients",
-          icon: IconUser,
+          icon: IconUsers,
           expandable: true,
           subItems: [
             {
-              id: "create-client",
-              label: "Crear clientes",
-              path: "/clientes/create-client",
+              id: "clients",
+              label: "Clientes",
+              path: "/clients",
             },
             {
               id: "client-debt",
