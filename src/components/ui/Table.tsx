@@ -107,7 +107,7 @@ export default function Table<T>({
               className="flex items-center gap-2 px-3 py-1.5 text-xs text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
             >
               <IconFilter size={18} />
-              <span>Filter</span>
+              <span>Filtrar</span>
             </button>
           )}
 
@@ -118,7 +118,7 @@ export default function Table<T>({
               className="flex items-center gap-2 px-3 py-1.5 text-xs text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
             >
               <IconDownload size={18} />
-              <span>Export</span>
+              <span>Exportar</span>
             </button>
           )}
 
