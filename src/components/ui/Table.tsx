@@ -92,7 +92,7 @@ export default function Table<T>({
             <select
               value={currentPageSize}
               onChange={e => table.setPageSize(Number(e.target.value))}
-              className="px-2 py-1 border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="px-2 py-1 border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500"
             >
               {pageSizeOptions.map(size => (
                 <option key={size} value={size}>{size}</option>
@@ -131,7 +131,7 @@ export default function Table<T>({
                 value={globalFilter ?? ''}
                 onChange={e => setGlobalFilter(e.target.value)}
                 placeholder={searchPlaceholder}
-                className="pl-9 pr-4 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                className="pl-9 pr-4 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-transparent"
               />
             </div>
           )}

@@ -41,7 +41,7 @@ export default function Select({
 
   const selectedOption = options.find((opt) => opt.value === value);
   const hasValue = !!selectedOption;
-  const isFloating = isFocused || hasValue;
+  // const isFloating = isFocused || hasValue;
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
