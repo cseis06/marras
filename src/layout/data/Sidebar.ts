@@ -57,9 +57,9 @@ export const sidebarData: SidebarData = {
           expandable: true,
           subItems: [
             {
-              id: "create-dish",
-              label: "Crear plato",
-              path: "/dishes/create-dish",
+              id: "dish-categories",
+              label: "Categorías de Platos",
+              path: "/dishes/dish-categories",
             },
             {
               id: "weekly-menu",

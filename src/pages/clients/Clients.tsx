@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
-import { IconHistory, IconEdit, IconMapPin, IconTrash, IconPlus } from '@tabler/icons-react';
+import { IconHistory, IconEdit, IconMapPin, IconTrash, IconPlus, IconUsers } from '@tabler/icons-react';
 import Table from '../../components/ui/Table';
 import Badge from '../../components/ui/Badge';
 import Button from '../../components/ui/Button';
@@ -209,7 +209,7 @@ export default function Clients() {
       {/* Header con botón crear */}
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Gestión Integral</h1>
+          <h1 className="text-2xl font-bold text-gray-800">Gestión de Clientes</h1>
           <p className="text-xs text-gray-500 mt-1">
             Consulte y actualice los datos de sus clientes.
           </p>
@@ -226,7 +226,7 @@ export default function Clients() {
 
       {/* Tabla */}
       <Table<Client>
-        title="Clientes"
+        title={<IconUsers />}
         data={clients}
         columns={columns}
         searchPlaceholder="Buscar cliente..."

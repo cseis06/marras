@@ -6,8 +6,7 @@ import { IconBell, IconChevronDown } from "@tabler/icons-react";
 const pageNames: Record<string, string> = {
   "/": "Inicio",
   "/dashboard": "Dashboard",
-  "/platos": "Platos",
-  "/dishes/create-dish": "Crear plato",
+  "/dishes": "Platos",
   "/dishes/weekly-menu": "Menú semanal",
   "/dishes/sale": "Promos",
   "/clients": "Clientes",
