@@ -124,7 +124,7 @@ export default function Select({
         onKeyDown={handleKeyDown}
         disabled={disabled}
         className={`
-          w-full flex items-center bg-gray-200 rounded-lg py-5 px-3 text-left
+          w-full flex items-center bg-gray-200 rounded-lg pb-3.5 pt-3.5 px-3 text-left
           transition-all duration-200 outline-none
           ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
           ${isFocused ? 'ring-1 ring-emerald-500' : ''}
@@ -146,7 +146,7 @@ export default function Select({
         <IconChevronDown
           size={18}
           className={`
-            text-gray-400 flex-shrink-0 ml-2 transition-transform duration-200
+            text-gray-400 flex-shrink-0 mx-1.5 transition-transform duration-200
             ${isOpen ? 'rotate-180' : ''}
           `}
         />

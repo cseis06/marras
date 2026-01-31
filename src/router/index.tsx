@@ -6,6 +6,7 @@ import Login from "../pages/login/Login";
 import Clients from "../pages/clients/Clients";
 import DishCategories from "../pages/platos/DishCategories";
 import Error404 from '../pages/error/Error404';
+import CreateOrder from "../pages/orders/CreateOrder";
 
 export const router = createBrowserRouter([
   // No Sidebar
@@ -28,6 +29,8 @@ export const router = createBrowserRouter([
       { path: "/clients", element: <Clients /> },
       
       { path: "/dishes/dish-categories", element: <DishCategories /> },
+      
+      { path: "/orders/create-order", element: <CreateOrder /> },
     ],
     // errorElement: <Error404 />
   },

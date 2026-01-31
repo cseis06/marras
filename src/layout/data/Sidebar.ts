@@ -8,6 +8,7 @@ import {
   IconChartBar,
   IconChartPie,
   IconArrowRightFromArc,
+  IconBoxSeam,
 } from "@tabler/icons-react";
 import { type ComponentType } from "react";
 
@@ -89,6 +90,25 @@ export const sidebarData: SidebarData = {
               id: "client-debt",
               label: "Historial de morosidad",
               path: "/clientes/client-debt",
+            },
+          ],
+        },
+        {
+          id: "orders",
+          label: "Pedidos",
+          path: "/orders",
+          icon: IconBoxSeam,
+          expandable: true,
+          subItems: [
+            {
+              id: "create-order",
+              label: "Crear pedido",
+              path: "/orders/create-order",
+            },
+            {
+              id: "orders",
+              label: "Ver pedidos",
+              path: "/orders",
             },
           ],
         },
