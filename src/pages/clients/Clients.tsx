@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
-import { IconHistory, IconEdit, IconMapPin, IconTrash, IconPlus, IconUsers } from '@tabler/icons-react';
+import { IconHistory, IconEdit, IconMapPin, IconTrash, IconPlus, IconUsers, IconArrowLeft } from '@tabler/icons-react';
 import Table from '../../components/ui/Table';
 import Badge from '../../components/ui/Badge';
 import Button from '../../components/ui/Button';
@@ -11,6 +11,7 @@ import ConfirmDialog from '../../components/ui/ConfirmDialog';
 import ClientForm from './ClientForm';
 import { clients as initialClients } from './data/Clients';
 import type { Client, Location, DelinquencyStatus } from './types/Client';
+import { useNavigate } from 'react-router-dom';
 
 const columnHelper = createColumnHelper<Client>();
 
@@ -22,6 +23,9 @@ const delinquencyConfig: Record<DelinquencyStatus, { label: string; variant: 'su
 };
 
 export default function Clients() {
+
+  const navigate = useNavigate();
+
   // Estado de datos
   const [clients, setClients] = useState<Client[]>(initialClients);
 
@@ -205,20 +209,28 @@ export default function Clients() {
   );
 
   return (
-    <div className="p-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-2 lg:px-6 py-8">
       {/* Header con botón crear */}
-      <div className="flex items-center justify-between mb-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800">Gestión de Clientes</h1>
-          <p className="text-xs text-gray-500 mt-1">
-            Consulte y actualice los datos de sus clientes.
+      <div className="flex items-center justify-between">
+        {/* Header */}
+        <div className="mb-6">
+          <button
+            onClick={() => navigate("/")}
+            className="flex items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors mb-4"
+          >
+            <IconArrowLeft size={20} />
+            <span className="text-sm">Volver</span>
+          </button>
+          <h1 className="text-2xl font-bold text-gray-800">Gestiona a los Clientes</h1>
+          <p className="text-sm text-gray-500 mt-1">
+            Puedes crear, editar o eliminar o ver información de los clientes
           </p>
         </div>
         <Button
           variant="gradient"
           icon={<IconPlus size={18} />}
           onClick={handleCreate}
-          className='max-w-[200px] text-sm!'
+          className='max-w-50 text-sm!'
         >
           Nuevo Cliente
         </Button>

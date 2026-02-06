@@ -120,9 +120,15 @@ export const discountCodes: DiscountCode[] = [
     value: 10000,
     active: false,
   },
+  {
+    code: 'INFLUENCER',
+    type: 'percentage',
+    value: 100,
+    active: true,
+  },
 ];
 
 // Constantes de costos
-export const PACKAGING_FEE = 5000; // ₲ 5.000
-export const DELIVERY_FEE = 10000; // ₲ 10.000
-export const FREE_DELIVERY_THRESHOLD = 100000; // Delivery gratis si supera ₲ 100.000
+export const PACKAGING_FEE = 0; // ₲ 5.000
+export const DELIVERY_FEE = 5000; // ₲ 10.000
+export const FREE_DELIVERY_THRESHOLD = 1000000; // Delivery gratis si supera ₲ 100.000

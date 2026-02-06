@@ -105,7 +105,7 @@ export default function CategoryQuantitySelector({
           {selectedItems.map((item) => (
             <div
               key={item.categoryId}
-              className="flex items-center justify-between bg-gray-50 rounded-lg p-3 border border-gray-200"
+              className="flex items-center justify-between  bg-gray-50 rounded-lg p-3 border border-gray-200"
             >
               <div className="flex-1">
                 <p className="text-sm font-medium text-gray-800">

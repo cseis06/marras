@@ -244,7 +244,7 @@ export default function CreateOrderPage() {
             <IconArrowLeft size={20} />
             <span className="text-sm">Volver</span>
           </button>
-          <h1 className="text-3xl font-bold text-gray-800">Crear Nuevo Pedido</h1>
+          <h1 className="text-2xl font-bold text-gray-800">Crear Nuevo Pedido</h1>
           <p className="text-sm text-gray-500 mt-1">
             Configura los detalles del pedido y las asignaciones.
           </p>

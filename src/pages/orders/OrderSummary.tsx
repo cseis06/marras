@@ -394,6 +394,7 @@ export default function OrderSummary({
           icon={<IconCheck size={18} />}
           onClick={onConfirm}
           disabled={!canConfirm || isSubmitting}
+          className='text-sm!'
         >
           {isSubmitting ? 'Procesando...' : isRecurring ? 'Confirmar Pedido Recurrente' : 'Confirmar y Crear Pedido'}
         </Button>
@@ -403,6 +404,7 @@ export default function OrderSummary({
           bgColor="bg-gray-300"
           onClick={onSaveDraft}
           disabled={isSubmitting}
+          className='text-sm!'
         >
           Guardar como Borrador
         </Button>

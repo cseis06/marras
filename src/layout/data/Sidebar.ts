@@ -70,7 +70,7 @@ export const sidebarData: SidebarData = {
             {
               id: "sale",
               label: "Promos",
-              path: "/dishes/sale",
+              path: "/dishes/discounts",
             },
           ],
         },
@@ -130,9 +130,9 @@ export const sidebarData: SidebarData = {
               path: "/management/bills",
             },
             {
-              id: "bills",
+              id: "suppliers",
               label: "Proveedores",
-              path: "/management/bills",
+              path: "/management/suppliers",
             },
           ],
         },

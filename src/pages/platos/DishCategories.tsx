@@ -1,10 +1,12 @@
 import { useState, useMemo } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
+import { useNavigate } from 'react-router-dom';
 import {
   IconPlus,
   IconEdit,
   IconTrash,
   IconCategory,
+  IconArrowLeft,
 } from '@tabler/icons-react';
 import Table from '../../components/ui/Table';
 import Badge from '../../components/ui/Badge';
@@ -29,6 +31,9 @@ const formatPrice = (value: number): string => {
 };
 
 export default function DishCategories() {
+  
+  const navigate = useNavigate();
+
   // Data state
   const [categories, setCategories] = useState<DishCategory[]>(initialCategories);
 
@@ -124,7 +129,7 @@ export default function DishCategories() {
       columnHelper.accessor('codigo', {
         header: 'Código',
         cell: (info) => (
-          <span className="font-mono text-sm bg-gray-100 px-2 py-1 rounded">
+          <span className="font-mono text-xs bg-gray-100 px-2 py-1 rounded">
             {info.getValue()}
           </span>
         ),
@@ -194,19 +199,22 @@ export default function DishCategories() {
   );
 
   return (
-    <div className="p-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-2 lg:px-6 py-8">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3">
-          {/*<div className="p-2 bg-emerald-100 rounded-lg">
-            <IconCategory size={24} className="text-emerald-600" />
-          </div>*/}
-          <div>
-            <h1 className="text-2xl font-bold text-gray-800">
-              Categorías de Platos
-            </h1>
-            <p className="text-xs text-gray-500 mt-1">
-              Gestiona las categorías y precios base de tus platos
+      <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between">
+          {/* Header */}
+          <div className="mb-6">
+            <button
+              onClick={() => navigate("/")}
+              className="flex items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors mb-4"
+            >
+              <IconArrowLeft size={20} />
+              <span className="text-sm">Volver</span>
+            </button>
+            <h1 className="text-2xl font-bold text-gray-800">Gestiona las Categorías de Platos</h1>
+            <p className="text-sm text-gray-500 mt-1">
+              Puedes crear, editar o eliminar o ver información de las categorías de platos
             </p>
           </div>
         </div>
@@ -214,7 +222,7 @@ export default function DishCategories() {
           variant="gradient"
           icon={<IconPlus size={18} />}
           onClick={handleCreate}
-          className='max-w-[200px] text-sm!'
+          className='max-w-50 text-sm!'
         >
           Nueva Categoría
         </Button>
