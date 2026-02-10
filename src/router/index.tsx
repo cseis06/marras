@@ -10,6 +10,7 @@ import CreateOrder from "../pages/orders/CreateOrder";
 import Promos from "../pages/promos/Promos";
 import OrdersDashboard from "../pages/orders-dashboard/OrdersDashboard";
 import Suppliers from "../pages/suppliers/Suppliers";
+import Expenses from "../pages/expenses/Expenses";
 
 export const router = createBrowserRouter([
   // No Sidebar
@@ -39,6 +40,7 @@ export const router = createBrowserRouter([
 
       
       { path: "/management/suppliers", element: <Suppliers /> },
+      { path: "/management/expenses", element: <Expenses /> },
     ],
     // errorElement: <Error404 />
   },

@@ -122,12 +122,12 @@ export const sidebarData: SidebarData = {
             {
               id: "payment",
               label: "Pagos",
-              path: "/management/payment",
+              path: "/management/payments",
             },
             {
               id: "bills",
               label: "Gastos",
-              path: "/management/bills",
+              path: "/management/expenses",
             },
             {
               id: "suppliers",
