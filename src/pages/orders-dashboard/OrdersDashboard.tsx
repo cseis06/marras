@@ -29,9 +29,9 @@ import { useNavigate } from 'react-router-dom';
 
 // Componentes
 import StatCard from '../../components/ui/StatCard';
-import ChartCard from './ChartCard';
-import PeriodSelector from './PeriodSelector';
-import RankingTable from './RankingTable';
+import ChartCard from './components/ChartCard';
+import PeriodSelector from './components/PeriodSelector';
+import RankingTable from './components/RankingTable';
 
 // Datos y helpers
 import {

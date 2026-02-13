@@ -4,10 +4,13 @@ import {
   IconEdit,
   IconTrash,
   IconPlus,
-  IconTruckDelivery,
+  IconUsersGroup,
   IconArrowLeft,
-  IconMail,
-  IconPhone,
+  IconBriefcase,
+  IconMoped,
+  IconChefHat,
+  IconSpeakerphone,
+  IconCalculator,
 } from '@tabler/icons-react';
 import Table from '../../components/ui/Table';
 import Badge from '../../components/ui/Badge';
@@ -15,81 +18,102 @@ import Button from '../../components/ui/Button';
 import ActionButtons from '../../components/ui/ActionButtons';
 import SlidePanel from '../../components/ui/SlidePanel';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
-import SupplierForm from './SuppliersForm';
-import { suppliers as initialSuppliers } from './data/Suppliers';
-import type { Supplier, SupplierCategory, SupplierStatus } from './types/Supplier';
+import EmployeeForm from './EmployeeForm';
+import { employees as initialEmployees } from './data/Employees';
+import type { Employee, EmployeeRole, ContractType, EmployeeStatus } from './types/Employee';
 import { useNavigate } from 'react-router-dom';
 
-const columnHelper = createColumnHelper<Supplier>();
+const columnHelper = createColumnHelper<Employee>();
 
-const statusConfig: Record<SupplierStatus, { label: string; variant: 'success' | 'warning' | 'error' | 'neutral' }> = {
+const statusConfig: Record<EmployeeStatus, { label: string; variant: 'success' | 'warning' | 'error' | 'neutral' }> = {
   activo: { label: 'Activo', variant: 'success' },
-  inactivo: { label: 'Inactivo', variant: 'neutral' },
-  suspendido: { label: 'Suspendido', variant: 'error' },
+  inactivo: { label: 'Inactivo', variant: 'error' },
+  vacaciones: { label: 'Vacaciones', variant: 'warning' },
+  licencia: { label: 'Licencia', variant: 'neutral' },
 };
 
-const categoryConfig: Record<SupplierCategory, { label: string }> = {
-  verduras: { label: 'Verduras y Frutas' },
-  carnes: { label: 'Carnes' },
-  lacteos: { label: 'Lácteos' },
-  bebidas: { label: 'Bebidas' },
-  limpieza: { label: 'Limpieza' },
-  empaques: { label: 'Empaques' },
-  otros: { label: 'Otros' },
+const contractConfig: Record<ContractType, { label: string; variant: 'success' | 'neutral' }> = {
+  empleado: { label: 'Empleado', variant: 'success' },
+  freelancer: { label: 'Freelancer', variant: 'neutral' },
 };
 
-export default function Suppliers() {
+const roleConfig: Record<EmployeeRole, { label: string; icon: React.ReactNode }> = {
+  cocinera: { label: 'Cocinera', icon: <IconChefHat size={16} className="text-orange-500" /> },
+  delivery: { label: 'Delivery', icon: <IconMoped size={16} className="text-blue-500" /> },
+  administracion: { label: 'Administración', icon: <IconBriefcase size={16} className="text-purple-500" /> },
+  marketing: { label: 'Marketing', icon: <IconSpeakerphone size={16} className="text-pink-500" /> },
+  contabilidad: { label: 'Contabilidad', icon: <IconCalculator size={16} className="text-emerald-500" /> },
+};
+
+const formatCurrency = (value: number): string => {
+  return new Intl.NumberFormat('es-PY', {
+    style: 'currency',
+    currency: 'PYG',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(value);
+};
+
+const formatDate = (dateString: string): string => {
+  return new Date(dateString).toLocaleDateString('es-PY', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  });
+};
+
+export default function Employees() {
   const navigate = useNavigate();
 
   // Estado de datos
-  const [suppliers, setSuppliers] = useState<Supplier[]>(initialSuppliers);
+  const [employees, setEmployees] = useState<Employee[]>(initialEmployees);
 
   // Estado del SlidePanel
   const [isPanelOpen, setIsPanelOpen] = useState(false);
-  const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(null);
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Estado del ConfirmDialog
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [supplierToDelete, setSupplierToDelete] = useState<Supplier | null>(null);
+  const [employeeToDelete, setEmployeeToDelete] = useState<Employee | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
   // Handlers del SlidePanel
   const handleCreate = () => {
-    setSelectedSupplier(null);
+    setSelectedEmployee(null);
     setIsPanelOpen(true);
   };
 
-  const handleEdit = (supplier: Supplier) => {
-    setSelectedSupplier(supplier);
+  const handleEdit = (employee: Employee) => {
+    setSelectedEmployee(employee);
     setIsPanelOpen(true);
   };
 
   const handleClosePanel = () => {
     setIsPanelOpen(false);
-    setSelectedSupplier(null);
+    setSelectedEmployee(null);
   };
 
-  const handleSubmit = async (data: Omit<Supplier, 'id'>) => {
+  const handleSubmit = async (data: Omit<Employee, 'id'>) => {
     setIsSubmitting(true);
 
     // Simular delay de API
     await new Promise((resolve) => setTimeout(resolve, 800));
 
-    if (selectedSupplier) {
+    if (selectedEmployee) {
       // Editar
-      setSuppliers((prev) =>
-        prev.map((s) =>
-          s.id === selectedSupplier.id ? { ...data, id: selectedSupplier.id } : s
+      setEmployees((prev) =>
+        prev.map((e) =>
+          e.id === selectedEmployee.id ? { ...data, id: selectedEmployee.id } : e
         )
       );
     } else {
       // Crear
-      const newSupplier: Supplier = {
+      const newEmployee: Employee = {
         ...data,
         id: `${Date.now()}`,
       };
-      setSuppliers((prev) => [newSupplier, ...prev]);
+      setEmployees((prev) => [newEmployee, ...prev]);
     }
 
     setIsSubmitting(false);
@@ -97,34 +121,34 @@ export default function Suppliers() {
   };
 
   // Handlers del ConfirmDialog
-  const handleDeleteClick = (supplier: Supplier) => {
-    setSupplierToDelete(supplier);
+  const handleDeleteClick = (employee: Employee) => {
+    setEmployeeToDelete(employee);
     setIsDeleteDialogOpen(true);
   };
 
   const handleConfirmDelete = async () => {
-    if (!supplierToDelete) return;
+    if (!employeeToDelete) return;
 
     setIsDeleting(true);
 
     // Simular delay de API
     await new Promise((resolve) => setTimeout(resolve, 600));
 
-    setSuppliers((prev) => prev.filter((s) => s.id !== supplierToDelete.id));
+    setEmployees((prev) => prev.filter((e) => e.id !== employeeToDelete.id));
 
     setIsDeleting(false);
     setIsDeleteDialogOpen(false);
-    setSupplierToDelete(null);
+    setEmployeeToDelete(null);
   };
 
   const handleCancelDelete = () => {
     setIsDeleteDialogOpen(false);
-    setSupplierToDelete(null);
+    setEmployeeToDelete(null);
   };
 
   // Otros handlers
   const handleExport = () => {
-    console.log('Exportar proveedores');
+    console.log('Exportar empleados');
     // TODO: descargar excel
   };
 
@@ -135,45 +159,47 @@ export default function Suppliers() {
 
   const columns = useMemo(
     () => [
-      columnHelper.accessor('ruc', {
-        header: 'RUC',
+      columnHelper.accessor('document', {
+        header: 'Cédula',
         cell: (info) => <span className="font-medium">{info.getValue()}</span>,
       }),
-      columnHelper.accessor('businessName', {
-        header: 'Razón Social',
-        cell: (info) => (
-          <div>
-            <p className="font-medium text-gray-800">{info.getValue()}</p>
-            <p className="text-xs text-gray-500">{info.row.original.contactName}</p>
-          </div>
-        ),
+      columnHelper.accessor((row) => `${row.firstName} ${row.lastName}`, {
+        id: 'fullName',
+        header: 'Nombre',
+        cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor('category', {
-        header: 'Categoría',
+      columnHelper.accessor('role', {
+        header: 'Rol',
         cell: (info) => {
-          const category = info.getValue();
-          const config = categoryConfig[category];
-          return <span className="text-xs text-gray-600">{config.label}</span>;
+          const role = info.getValue();
+          const config = roleConfig[role];
+          return (
+            <span className="flex items-center gap-1.5">
+              {config.icon}
+              <span className="text-xs">{config.label}</span>
+            </span>
+          );
         },
       }),
-      columnHelper.accessor('phone', {
-        header: 'Contacto',
+      columnHelper.accessor('contractType', {
+        header: 'Contrato',
+        cell: (info) => {
+          const type = info.getValue();
+          const config = contractConfig[type];
+          return <Badge variant={config.variant} size="xxs">{config.label}</Badge>;
+        },
+      }),
+      columnHelper.accessor('salary', {
+        header: 'Salario/Tarifa',
         cell: (info) => (
-          <div className="space-y-1">
-            <p className="flex items-center gap-1 text-xs">
-              <IconPhone size={14} className="text-gray-400" />
-              {info.getValue()}
-            </p>
-            <p className="flex items-center gap-1 text-xs text-gray-500">
-              <IconMail size={12} className="text-gray-400" />
-              {info.row.original.email}
-            </p>
-          </div>
+          <span className="text-xs text-gray-700">{formatCurrency(info.getValue())}</span>
         ),
       }),
-      columnHelper.accessor('city', {
-        header: 'Ciudad',
-        cell: (info) => <span className="text-xs text-gray-600">{info.getValue()}</span>,
+      columnHelper.accessor('startDate', {
+        header: 'Ingreso',
+        cell: (info) => (
+          <span className="text-xs text-gray-600">{formatDate(info.getValue())}</span>
+        ),
       }),
       columnHelper.accessor('status', {
         header: 'Estado',
@@ -221,9 +247,9 @@ export default function Suppliers() {
             <IconArrowLeft size={20} />
             <span className="text-sm">Volver</span>
           </button>
-          <h1 className="text-2xl font-bold text-gray-800">Gestión de Proveedores</h1>
+          <h1 className="text-2xl font-bold text-gray-800">Gestiona a los Empleados</h1>
           <p className="text-sm text-gray-500 mt-1">
-            Administra la información de tus proveedores
+            Administra empleados y servicios contratados del negocio
           </p>
         </div>
         <Button
@@ -232,16 +258,16 @@ export default function Suppliers() {
           onClick={handleCreate}
           className="max-w-50 text-sm!"
         >
-          Nuevo Proveedor
+          Nuevo Empleado
         </Button>
       </div>
 
       {/* Tabla */}
-      <Table<Supplier>
-        title={<IconTruckDelivery />}
-        data={suppliers}
+      <Table<Employee>
+        title={<IconUsersGroup />}
+        data={employees}
         columns={columns}
-        searchPlaceholder="Buscar proveedor..."
+        searchPlaceholder="Buscar empleado..."
         onExport={handleExport}
         onFilter={handleFilter}
         pageSize={5}
@@ -251,12 +277,12 @@ export default function Suppliers() {
       <SlidePanel
         isOpen={isPanelOpen}
         onClose={handleClosePanel}
-        title={selectedSupplier ? 'Editar Proveedor' : 'Nuevo Proveedor'}
+        title={selectedEmployee ? 'Editar Empleado' : 'Nuevo Empleado'}
         width="w-full max-w-xl"
       >
-        <SupplierForm
-          key={selectedSupplier?.id ?? 'new'}
-          supplier={selectedSupplier}
+        <EmployeeForm
+          key={selectedEmployee?.id ?? 'new'}
+          employee={selectedEmployee}
           onSubmit={handleSubmit}
           onCancel={handleClosePanel}
           loading={isSubmitting}
@@ -268,12 +294,14 @@ export default function Suppliers() {
         isOpen={isDeleteDialogOpen}
         onClose={handleCancelDelete}
         onConfirm={handleConfirmDelete}
-        title="Eliminar proveedor"
+        title="Eliminar empleado"
         message={
           <>
             ¿Estás seguro de eliminar a{' '}
-            <span className="font-semibold">{supplierToDelete?.businessName}</span>? Esta acción
-            no se puede deshacer.
+            <span className="font-semibold">
+              {employeeToDelete?.firstName} {employeeToDelete?.lastName}
+            </span>
+            ? Esta acción no se puede deshacer.
           </>
         }
         confirmText="Eliminar"

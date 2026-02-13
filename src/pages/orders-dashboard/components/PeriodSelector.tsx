@@ -1,5 +1,5 @@
-import type { TimePeriod } from './types/Order';
-import { timePeriodLabels } from './types/Order';
+import type { TimePeriod } from '../types/Order';
+import { timePeriodLabels } from '../types/Order';
 
 interface PeriodSelectorProps {
   value: TimePeriod;

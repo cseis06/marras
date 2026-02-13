@@ -11,7 +11,7 @@ interface ConfirmDialogProps {
   message: ReactNode;
   confirmText?: string;
   cancelText?: string;
-  variant?: 'danger' | 'warning' | 'info';
+  variant?: 'danger' | 'warning' | 'info' | 'success';
   loading?: boolean;
 }
 
@@ -27,6 +27,10 @@ const variantStyles = {
   info: {
     icon: 'bg-blue-100 text-blue-600',
     button: 'bg-blue-600',
+  },
+  success: {
+    icon: 'bg-emerald-100 text-emerald-600',
+    button: 'bg-emerald-600',
   },
 };
 
@@ -60,7 +64,7 @@ export default function ConfirmDialog({
             bgColor="bg-gray-300"
             onClick={onClose}
             disabled={loading}
-            className="flex-1"
+            className="flex-1 text-sm"
           >
             {cancelText}
           </Button>
@@ -68,7 +72,7 @@ export default function ConfirmDialog({
             bgColor={styles.button}
             onClick={onConfirm}
             disabled={loading}
-            className="flex-1"
+            className="flex-1 text-sm"
           >
             {loading ? 'Procesando...' : confirmText}
           </Button>

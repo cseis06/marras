@@ -230,7 +230,7 @@ export default function Expenses() {
       columnHelper.accessor('date', {
         header: 'Fecha',
         cell: (info) => (
-          <span className="flex items-center gap-1.5 text-sm">
+          <span className="flex items-center gap-1.5 text-xs">
             <IconCalendar size={14} className="text-gray-400" />
             {formatDate(info.getValue())}
           </span>
@@ -242,7 +242,7 @@ export default function Expenses() {
           const category = info.getValue();
           const config = categoryConfig[category];
           return (
-            <span className={`text-sm font-medium ${config.color}`}>
+            <span className={`text-xs font-medium ${config.color}`}>
               {config.label}
             </span>
           );
@@ -252,7 +252,7 @@ export default function Expenses() {
         header: 'Descripción',
         cell: (info) => (
           <div>
-            <p className="text-sm text-gray-800 line-clamp-1">{info.getValue()}</p>
+            <p className="text-xs text-gray-800 line-clamp-1">{info.getValue()}</p>
             {info.row.original.supplierName && (
               <p className="text-xs text-gray-500">{info.row.original.supplierName}</p>
             )}
@@ -272,7 +272,7 @@ export default function Expenses() {
         cell: (info) => {
           const method = info.getValue();
           const config = paymentMethodConfig[method];
-          return <span className="text-sm text-gray-600">{config.label}</span>;
+          return <span className="text-xs text-gray-600">{config.label}</span>;
         },
       }),
       columnHelper.accessor('status', {

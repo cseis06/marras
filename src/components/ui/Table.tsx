@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import type { ReactNode } from 'react';
 import type { SortingState, ColumnDef } from '@tanstack/react-table';
 import {
   useReactTable,
@@ -13,7 +14,7 @@ import { IconChevronUp, IconChevronDown, IconSelector, IconFilter, IconDownload,
 interface TableProps<T> {
   data: T[];
   columns: ColumnDef<T, any>[];
-  title?: string;
+  title?: ReactNode;
   searchable?: boolean;
   searchPlaceholder?: string;
   exportable?: boolean;
@@ -22,6 +23,8 @@ interface TableProps<T> {
   onFilter?: () => void;
   pageSize?: number;
   pageSizeOptions?: number[];
+  filterPanel?: ReactNode;
+  filterActive?: boolean;
 }
 
 export default function Table<T>({
@@ -36,6 +39,8 @@ export default function Table<T>({
   onFilter,
   pageSize = 5,
   pageSizeOptions = [5, 10, 20, 50],
+  filterPanel,
+  filterActive = false,
 }: TableProps<T>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState('');
@@ -104,10 +109,17 @@ export default function Table<T>({
           {filterable && (
             <button
               onClick={onFilter}
-              className="flex items-center gap-2 px-3 py-1.5 text-xs text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+              className={`flex items-center gap-2 px-3 py-1.5 text-xs rounded-lg transition-colors ${
+                filterActive
+                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                  : 'text-gray-600 hover:bg-gray-50'
+              }`}
             >
               <IconFilter size={18} />
               <span>Filtrar</span>
+              {filterActive && (
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              )}
             </button>
           )}
 
@@ -137,6 +149,9 @@ export default function Table<T>({
           )}
         </div>
       </div>
+
+      {/* Filter Panel */}
+      {filterPanel}
 
       {/* Table */}
       <div className="overflow-x-auto">

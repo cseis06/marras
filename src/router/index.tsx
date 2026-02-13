@@ -11,6 +11,9 @@ import Promos from "../pages/promos/Promos";
 import OrdersDashboard from "../pages/orders-dashboard/OrdersDashboard";
 import Suppliers from "../pages/suppliers/Suppliers";
 import Expenses from "../pages/expenses/Expenses";
+import Employees from "../pages/employees/Employees";
+import { DebtPage } from "../pages/debt/Debt";
+import Payments from "../pages/payment/Payment";
 
 export const router = createBrowserRouter([
   // No Sidebar
@@ -26,21 +29,32 @@ export const router = createBrowserRouter([
   {
     element: <MainLayout />,
     children: [
+      // Inicio
       { path: "/*", element: <Error404 /> },
       { path: "/", element: <Home /> },
       { path: "/dashboard", element: <Home /> },
 
+      // Clientes
       { path: "/clients", element: <Clients /> },
+      { path: "/clients/debt", element: <DebtPage /> },
       
+      // Platos
       { path: "/dishes/dish-categories", element: <DishCategories /> },
       { path: "/dishes/discounts", element: <Promos /> },
       
+      // Pedidos
       { path: "/orders/create-order", element: <CreateOrder /> },
-      { path: "/orders", element: <OrdersDashboard /> },
 
-      
+      // Gestión 
+      { path: "/management/payments", element: <Payments /> },
       { path: "/management/suppliers", element: <Suppliers /> },
       { path: "/management/expenses", element: <Expenses /> },
+      
+      // RRHH
+      { path: "/hrm/employees", element: <Employees /> },
+      
+      // Informes
+      { path: "/stats/orders", element: <OrdersDashboard /> },
     ],
     // errorElement: <Error404 />
   },
