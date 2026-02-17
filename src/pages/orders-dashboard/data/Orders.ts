@@ -327,7 +327,7 @@ export const getDeliveryStats = (filteredOrders: Order[]) => {
     if (existing) {
       existing.deliveries += 1;
     } else {
-      const person = deliveryPersons.find(d => d.id === order.deliveryPersonId);
+      // Eliminada variable 'person' no utilizada
       deliveryMap.set(order.deliveryPersonId!, {
         name: order.deliveryPersonName || 'Sin asignar',
         deliveries: 1,

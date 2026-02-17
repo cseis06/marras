@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import Input from '../../components/ui/FloatingInput';
-import Select from '../../components/ui/Select';
-import TextArea from '../../components/ui/TextArea';
-import Button from '../../components/ui/Button';
-import type { SelectOption } from '../../components/ui/Select';
-import type { Supplier, SupplierCategory, SupplierStatus } from './types/Supplier';
+import Input from '../../../components/ui/FloatingInput';
+import Select from '../../../components/ui/Select';
+import TextArea from '../../../components/ui/TextArea';
+import Button from '../../../components/ui/Button';
+import type { SelectOption } from '../../../components/ui/Select';
+import type { Supplier, SupplierCategory, SupplierStatus } from '../types/Supplier';
 
 interface SupplierFormProps {
   supplier?: Supplier | null;

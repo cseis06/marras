@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { IconAlertTriangle, IconEye } from '@tabler/icons-react';
-import { getSeverityLabel } from '../types/Debt';
+import { getSeverityLabel, getFullName } from '../types/Debt';
 import type { ClientRanking, DebtSeverity } from '../types/Debt';
 
 interface TopDefaulterProps {
@@ -92,7 +92,7 @@ export const TopDefaulter = ({ defaulters, onViewClient }: TopDefaulterProps) =>
                 {/* Info del cliente */}
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-900 truncate">
-                    {defaulter.name}
+                    {getFullName(defaulter)}
                   </p>
                   <div className="flex items-center gap-2 mt-0.5">
                     <span className="text-xs text-gray-500">{defaulter.code}</span>

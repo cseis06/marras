@@ -16,7 +16,7 @@ import Button from '../../components/ui/Button';
 import ActionButtons from '../../components/ui/ActionButtons';
 import SlidePanel from '../../components/ui/SlidePanel';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
-import PromoForm from './PromoForm';
+import PromoForm from './components/PromoForm';
 import { discountCodes as initialDiscountCodes } from './data/DiscountCodes';
 import type { DiscountCode } from './types/DiscountCode';
 

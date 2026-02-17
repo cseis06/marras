@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import type { TimePeriod } from './types/Expense';
-import { timePeriodLabels } from './types/Expense';
+import type { TimePeriod } from '../types/Expense';
+import { timePeriodLabels } from '../types/Expense';
 import { IconRefresh } from '@tabler/icons-react';
 
 interface PeriodSelectorProps {

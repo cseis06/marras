@@ -388,7 +388,7 @@ export default function OrdersDashboard() {
                     ))}
                   </Pie>
                   <Tooltip
-                    formatter={(value: number) => [`${value} pedidos`, '']}
+                    formatter={(value) => [`${value ?? 0} pedidos`, '']}
                   />
                   <Legend
                     layout="vertical"
@@ -474,7 +474,7 @@ export default function OrdersDashboard() {
                     width={100}
                   />
                   <Tooltip
-                    formatter={(value: number) => [formatFullCurrency(value), 'Ingresos']}
+                   formatter={(value) => [formatFullCurrency(Number(value) || 0), 'Ingresos']}
                   />
                   <Bar
                     dataKey="ingresos"

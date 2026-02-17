@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { IconPlus, IconTrash, IconMapPin } from '@tabler/icons-react';
-import Input from '../../components/ui/FloatingInput';
-import Select from '../../components/ui/Select';
-import type { SelectOption } from '../../components/ui/Select';
-import Button from '../../components/ui/Button';
-import type { Client, Location, DelinquencyStatus } from './types/Client';
+import Input from '../../../components/ui/FloatingInput';
+import Select from '../../../components/ui/Select';
+import type { SelectOption } from '../../../components/ui/Select';
+import Button from '../../../components/ui/Button';
+import type { Client, Location, DelinquencyStatus } from '../types/Client';
 
 interface ClientFormProps {
   client?: Client | null;

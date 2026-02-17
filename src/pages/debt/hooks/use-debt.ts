@@ -43,8 +43,9 @@ export const useDebt = () => {
       // Filtro de búsqueda
       if (filters.search) {
         const searchTerm = filters.search.toLowerCase();
+        const fullName = `${client.firstName} ${client.lastName}`.toLowerCase();
         const matches =
-          client.name.toLowerCase().includes(searchTerm) ||
+          fullName.includes(searchTerm) ||
           client.code.toLowerCase().includes(searchTerm) ||
           client.phone.includes(searchTerm);
         if (!matches) return false;

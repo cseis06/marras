@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { IconPercentage } from '@tabler/icons-react';
-import Input from '../../components/ui/FloatingInput';
-import Select from '../../components/ui/Select';
-import type { SelectOption } from '../../components/ui/Select';
-import CurrencyInput from '../../components/ui/CurrencyInput';
-import Toggle from '../../components/ui/Toggle';
-import Button from '../../components/ui/Button';
-import type { DiscountCode, DiscountType } from './types/DiscountCode';
+import Input from '../../../components/ui/FloatingInput';
+import Select from '../../../components/ui/Select';
+import type { SelectOption } from '../../../components/ui/Select';
+import CurrencyInput from '../../../components/ui/CurrencyInput';
+import Toggle from '../../../components/ui/Toggle';
+import Button from '../../../components/ui/Button';
+import type { DiscountCode, DiscountType } from '../types/DiscountCode';
 
 interface PromoFormProps {
   promo?: DiscountCode | null;
@@ -25,8 +25,8 @@ const getInitialFormData = (promo?: DiscountCode | null) => ({
   code: promo?.code ?? '',
   type: promo?.type ?? 'percentage' as DiscountType,
   value: promo?.value ?? 0,
-  minAmount: promo?.minAmount ?? undefined,
-  maxDiscount: promo?.maxDiscount ?? undefined,
+  minAmount: promo?.minAmount ?? 0,
+  maxDiscount: promo?.maxDiscount ?? 0,
   active: promo?.active ?? true,
 });
 
@@ -48,7 +48,7 @@ export default function PromoForm({
       
       // Si cambia el tipo a 'fixed', limpiar maxDiscount
       if (field === 'type' && value === 'fixed') {
-        updated.maxDiscount = undefined;
+        updated.maxDiscount = 0;
       }
       
       return updated;
@@ -198,8 +198,8 @@ export default function PromoForm({
           <div>
             <CurrencyInput
               label="Monto mínimo de compra"
-              value={formData.minAmount ?? 0}
-              onChange={(value) => handleChange('minAmount', value || undefined)}
+              value={formData.minAmount}
+              onChange={(value) => handleChange('minAmount', value)}
               error={errors.minAmount}
             />
             <p className="text-xs text-gray-500 mt-1">
@@ -211,8 +211,8 @@ export default function PromoForm({
             <div>
               <CurrencyInput
                 label="Descuento máximo"
-                value={formData.maxDiscount ?? 0}
-                onChange={(value) => handleChange('maxDiscount', value || undefined)}
+                value={formData.maxDiscount}
+                onChange={(value) => handleChange('maxDiscount', value)}
                 error={errors.maxDiscount}
               />
               <p className="text-xs text-gray-500 mt-1">

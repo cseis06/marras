@@ -3,6 +3,7 @@ import type {
   Transaction,
   CollectionNote,
   DebtStats,
+  DebtSeverity,
 } from '../types/Debt';
 
 // Helpers para generar fechas
@@ -577,6 +578,6 @@ export const getTopDefaulters = (clients: ClientDebt[], limit: number = 5) => {
       score: c.score,
       pendingDebt: c.currentDebt,
       daysOverdue: c.daysOverdue,
-      severity: c.daysOverdue <= 30 ? 'low' : c.daysOverdue <= 60 ? 'moderate' : 'critical',
+      severity: (c.daysOverdue <= 30 ? 'low' : c.daysOverdue <= 60 ? 'moderate' : 'critical') as DebtSeverity,
     }));
 };

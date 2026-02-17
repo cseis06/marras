@@ -9,12 +9,12 @@ import {
   IconLoader2,
   IconRepeat,
 } from '@tabler/icons-react';
-import Badge from '../../components/ui/Badge';
-import Button from '../../components/ui/Button';
-import type { Client, Location } from '../clients/types/Client';
-import type { OrderItem, DiscountCode, RecurrenceConfig } from './types/order';
-import { discountCodes } from './data/order';
-import { weekDayLabels, ALL_WEEK_DAYS } from './types/order';
+import Badge from '../../../components/ui/Badge';
+import Button from '../../../components/ui/Button';
+import type { Client, Location } from '../../clients/types/Client';
+import type { OrderItem, DiscountCode, RecurrenceConfig } from '../types/order';
+import { discountCodes } from '../data/order';
+import { weekDayLabels, ALL_WEEK_DAYS } from '../types/order';
 
 interface OrderSummaryProps {
   orderNumber: string;

@@ -2,10 +2,11 @@ import { useState, forwardRef } from 'react';
 import type { InputHTMLAttributes } from 'react';
 import { IconCalendar } from '@tabler/icons-react';
 
-interface DateInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
+interface DateInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'onChange'> {
   label: string;
   helperText?: string;
   error?: string;
+  onChange?: (value: string) => void;
 }
 
 const DateInput = forwardRef<HTMLInputElement, DateInputProps>(
@@ -19,6 +20,7 @@ const DateInput = forwardRef<HTMLInputElement, DateInputProps>(
       defaultValue,
       onFocus,
       onBlur,
+      onChange,
       disabled,
       required,
       ...props
@@ -43,7 +45,7 @@ const DateInput = forwardRef<HTMLInputElement, DateInputProps>(
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       setHasValue(!!e.target.value);
-      props.onChange?.(e);
+      onChange?.(e.target.value);
     };
 
     return (

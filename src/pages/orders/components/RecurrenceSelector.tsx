@@ -1,8 +1,8 @@
 import { IconRepeat, IconCalendarEvent } from '@tabler/icons-react';
-import type { WeekDay } from './types/order';
-import { weekDayLabels, weekDayShortLabels, ALL_WEEK_DAYS } from './types/order';
-import Toggle from '../../components/ui/Toggle';
-import DateInput from '../../components/ui/DateInput';
+import type { WeekDay } from '../types/order';
+import { weekDayLabels, weekDayShortLabels, ALL_WEEK_DAYS } from '../types/order';
+import Toggle from '../../../components/ui/Toggle';
+import DateInput from '../../../components/ui/DateInput';
 
 interface RecurrenceSelectorProps {
   enabled: boolean;
@@ -123,14 +123,14 @@ export default function RecurrenceSelector({
             <DateInput
               label="Fecha de inicio"
               value={startDate}
-              onChange={(e) => onStartDateChange(e.target.value)}
+              onChange={onStartDateChange}
               min={today}
               required
             />
             <DateInput
               label="Fecha de fin (opcional)"
               value={endDate || ''}
-              onChange={(e) => onEndDateChange(e.target.value)}
+              onChange={onEndDateChange}
               min={startDate || today}
               helperText="Dejar vacío para indefinido"
             />

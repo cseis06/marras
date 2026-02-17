@@ -6,14 +6,21 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   icon?: ReactNode;
   iconPosition?: 'left' | 'right';
   clickableIcon?: true | false;
+  error?: string;
+  helperText?: string;
+
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, icon, iconPosition = 'right', className = '', clickableIcon = false, value, defaultValue, onFocus, onBlur, ...props }, ref) => {
+  ({ label, icon, iconPosition = 'right', className = '', clickableIcon = false, error, helperText, value, defaultValue, onFocus, onBlur, required, ...props }, ref) => {
     const [isFocused, setIsFocused] = useState(false);
     const [hasValue, setHasValue] = useState(!!value || !!defaultValue);
 
     const isFloating = isFocused || hasValue;
+
+    if (error) {
+      console.error(helperText);
+    }
 
     const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
       setIsFocused(true);
@@ -33,29 +40,30 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 
     return (
       <div className={`relative w-full font-normal bg-gray-200 rounded-md px-2 py-1.5 ${className}`}>
-        <div className={`flex items-center ${iconPosition === 'left' ? 'flex-row' : 'flex-row-reverse'}`}>
-          {icon && (
+          <div className={`flex items-center ${iconPosition === 'left' ? 'flex-row' : 'flex-row-reverse'}`}>
+            {icon && (
             <div className={`text-gray-400 flex-shrink-0 p-2 ${clickableIcon ? "cursor-pointer" : ""}`}>
-              {icon}
-            </div>
-          )}
+                {icon}
+              </div>
+            )}
           <div className='relative flex-1'>
-            <input
-              ref={ref}
-              value={value}
-              defaultValue={defaultValue}
-              onFocus={handleFocus}
-              onBlur={handleBlur}
-              onChange={handleChange}
+              <input
+                ref={ref}
+                value={value}
+                defaultValue={defaultValue}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
+                onChange={handleChange}
+                required={required}
               className='w-full bg-transparent border-none outline-none pt-5 pb-1.5 px-3 text-gray-800 peer text-sm'
-              {...props}
-            />
-            <label
+                {...props}
+              />
+              <label
               className={`absolute left-2 transition-all duration-200 ease-out pointer-events-none text-gray-400
                 ${isFloating ? 'top-1 text-[10px]' : 'top-1/2 -translate-y-1/2 text-sm'}`}
-            >
-              {label}
-            </label>
+              >
+                {label}
+              </label>
           </div>
         </div>
       </div>

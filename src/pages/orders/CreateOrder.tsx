@@ -8,24 +8,16 @@ import {
   IconArrowLeft,
 } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
-
-// Componentes reutilizables
 import SearchInput, { type SearchOption } from '../../components/ui/SearchInput';
 import DateInput from '../../components/ui/DateInput';
 import Select from '../../components/ui/Select';
 import TextArea from '../../components/ui/TextArea';
-
-// Componentes específicos
-import CategoryQuantitySelector from './CategoryQuantitySelector';
-import OrderSummary from './OrderSummary';
-import RecurrenceSelector from './RecurrenceSelector';
-
-// Datos
+import CategoryQuantitySelector from './components/CategoryQuantitySelector';
+import OrderSummary from './components/OrderSummary';
+import RecurrenceSelector from './components/RecurrenceSelector';
 import { clients } from '../clients/data/Clients';
 import { dishCategories } from '../platos/data/DishCategories';
 import { chefs, deliveryPersons, PACKAGING_FEE, DELIVERY_FEE, FREE_DELIVERY_THRESHOLD } from './data/order';
-
-// Tipos
 import type { Client, Location } from '../clients/types/Client';
 import type { OrderItem, DiscountCode, Chef, DeliveryPerson, WeekDay, RecurrenceConfig } from './types/order';
 
@@ -280,12 +272,12 @@ export default function CreateOrderPage() {
                 />
 
                 <DateInput
-                  label="Fecha de Entrega"
-                  value={deliveryDate}
-                  onChange={(e) => setDeliveryDate(e.target.value)}
-                  min={today}
-                  required
-                />
+                 label="Fecha de Entrega"
+                 value={deliveryDate}
+                 onChange={setDeliveryDate}
+                 min={today}
+                 required
+               />
 
                 <Select
                   label="Ubicación de Entrega"

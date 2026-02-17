@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import Input from '../../components/ui/FloatingInput';
-import Select from '../../components/ui/Select';
-import TextArea from '../../components/ui/TextArea';
-import CurrencyInput from '../../components/ui/CurrencyInput';
-import DateInput from '../../components/ui/DateInput';
-import Button from '../../components/ui/Button';
-import type { SelectOption } from '../../components/ui/Select';
-import type { Employee, EmployeeRole, ContractType, EmployeeStatus } from './types/Employee';
+import Input from '../../../components/ui/FloatingInput';
+import Select from '../../../components/ui/Select';
+import TextArea from '../../../components/ui/TextArea';
+import CurrencyInput from '../../../components/ui/CurrencyInput';
+import DateInput from '../../../components/ui/DateInput';
+import Button from '../../../components/ui/Button';
+import type { SelectOption } from '../../../components/ui/Select';
+import type { Employee, EmployeeRole, ContractType, EmployeeStatus } from '../types/Employee';
 
 interface EmployeeFormProps {
   employee?: Employee | null;

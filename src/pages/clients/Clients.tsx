@@ -8,7 +8,7 @@ import ExpandableCell from '../../components/ui/ExpandableCell';
 import ActionButtons from '../../components/ui/ActionButtons';
 import SlidePanel from '../../components/ui/SlidePanel';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
-import ClientForm from './ClientForm';
+import ClientForm from './components/ClientForm';
 import { clients as initialClients } from './data/Clients';
 import type { Client, Location, DelinquencyStatus } from './types/Client';
 import { useNavigate } from 'react-router-dom';

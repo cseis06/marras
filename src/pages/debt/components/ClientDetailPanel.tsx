@@ -14,6 +14,7 @@ import {
   getStatusVariant,
   getScoreLabel,
   getScoreVariant,
+  getFullName,
 } from '../types/Debt';
 import type { ClientDebt, Transaction, CollectionNote } from '../types/Debt';
 import { SummaryTab } from './SummaryTab';
@@ -135,7 +136,7 @@ export const ClientDetailPanel = ({
               <div className="flex-1">
                 <div className="flex items-center gap-3">
                   <h2 className="text-xl font-bold text-gray-900">
-                    {client.name}
+                    {getFullName(client)}
                   </h2>
                   <span
                     className={getBadgeClasses(getStatusVariant(client.status))}

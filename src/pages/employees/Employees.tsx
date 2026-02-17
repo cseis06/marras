@@ -18,7 +18,7 @@ import Button from '../../components/ui/Button';
 import ActionButtons from '../../components/ui/ActionButtons';
 import SlidePanel from '../../components/ui/SlidePanel';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
-import EmployeeForm from './EmployeeForm';
+import EmployeeForm from './components/EmployeeForm';
 import { employees as initialEmployees } from './data/Employees';
 import type { Employee, EmployeeRole, ContractType, EmployeeStatus } from './types/Employee';
 import { useNavigate } from 'react-router-dom';

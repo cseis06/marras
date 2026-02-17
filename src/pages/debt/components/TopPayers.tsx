@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { IconTrophy, IconMedal } from '@tabler/icons-react';
-import { getScoreLabel } from '../types/Debt';
+import { getScoreLabel, getFullName } from '../types/Debt';
 import type { ClientRanking } from '../types/Debt';
 
 interface TopPayersProps {
@@ -94,7 +94,7 @@ export const TopPayers = ({ payers, onViewClient }: TopPayersProps) => {
               {/* Info del cliente */}
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 truncate">
-                  {payer.name}
+                  {getFullName(payer)}
                 </p>
                 <p className="text-xs text-gray-500">{payer.code}</p>
               </div>

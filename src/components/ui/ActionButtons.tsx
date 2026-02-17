@@ -13,7 +13,7 @@ interface ActionButtonsProps {
 
 export default function ActionButtons({ actions }: ActionButtonsProps) {
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-1 cursor-pointer">
       {actions.map((action, index) => (
         <button
           key={index}

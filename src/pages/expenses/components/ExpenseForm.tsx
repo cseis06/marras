@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import Input from '../../components/ui/FloatingInput';
-import Select from '../../components/ui/Select';
-import TextArea from '../../components/ui/TextArea';
-import Button from '../../components/ui/Button';
-import CurrencyInput from '../../components/ui/CurrencyInput';
-import DateInput from '../../components/ui/DateInput';
-import type { SelectOption } from '../../components/ui/Select';
-import type { Expense, ExpenseCategory, PaymentMethod, ExpenseStatus } from './types/Expense';
-import { suppliers } from '../suppliers/data/Suppliers';
+import Input from '../../../components/ui/FloatingInput';
+import Select from '../../../components/ui/Select';
+import TextArea from '../../../components/ui/TextArea';
+import Button from '../../../components/ui/Button';
+import CurrencyInput from '../../../components/ui/CurrencyInput';
+import DateInput from '../../../components/ui/DateInput';
+import type { SelectOption } from '../../../components/ui/Select';
+import type { Expense, ExpenseCategory, PaymentMethod, ExpenseStatus } from '../types/Expense';
+import { suppliers } from '../../suppliers/data/Suppliers';
 
 interface ExpenseFormProps {
   expense?: Expense | null;

@@ -1,10 +1,10 @@
 import { useState, useCallback } from 'react';
 import { IconLink, IconLinkOff } from '@tabler/icons-react';
-import Input from '../../components/ui/FloatingInput';
-import CurrencyInput from '../../components/ui/CurrencyInput';
-import Toggle from '../../components/ui/Toggle';
-import Button from '../../components/ui/Button';
-import type { DishCategory, DishCategoryFormData } from '../../pages/platos/types/DishCategory';
+import Input from '../../../components/ui/FloatingInput';
+import CurrencyInput from '../../../components/ui/CurrencyInput';
+import Toggle from '../../../components/ui/Toggle';
+import Button from '../../../components/ui/Button';
+import type { DishCategory, DishCategoryFormData } from '../../../pages/platos/types/DishCategory';
 
 interface DishCategoryFormProps {
   category?: DishCategory | null;

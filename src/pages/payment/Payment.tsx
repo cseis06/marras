@@ -17,10 +17,10 @@ import ConfirmDialog from '../../components/ui/ConfirmDialog';
 import StatCard from '../../components/ui/StatCard';
 import ClientSelector from './components/ClientSelector';
 import PaymentForm from './components/PaymentForm';
-import { orders as initialOrders, getClientPendingOrders } from './data/Orders';
+import { orders as initialOrders } from './data/Orders';
 import { payments as initialPayments, generateReceiptNumber } from './data/Payments';
 import { clients } from '../clients/data/Clients';
-import type { Order, Payment, OrderPaymentStatus, orderStatusVariants } from './types/Payment';
+import type { Order, Payment, OrderPaymentStatus } from './types/Payment';
 import type { Client } from '../clients/types/Client';
 
 const columnHelper = createColumnHelper<Order>();
@@ -69,7 +69,7 @@ export default function Payments() {
 
   // Estado de datos
   const [orders, setOrders] = useState<Order[]>(initialOrders);
-  const [payments, setPayments] = useState<Payment[]>(initialPayments);
+  const [, setPayments] = useState<Payment[]>(initialPayments);
 
   // Estado de selección de cliente
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);

@@ -23,7 +23,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref
   ) => {
-    const baseStyles = 'w-full px-5 py-4 rounded-lg font-medium transition-all duration-200 active:scale-95 hover:opacity-80 flex gap-2 items-center justify-center text-center text-base font-semibold uppercase';
+    const baseStyles = 'w-full px-5 py-4 rounded-lg font-medium transition-all duration-200 active:scale-95 hover:opacity-80 flex gap-2 items-center justify-center text-center text-base font-semibold uppercase cursor-pointer';
 
     const variantStyles = {
       filled: `${bgColor} ${textColor}`,

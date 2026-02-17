@@ -15,7 +15,7 @@ import Button from '../../components/ui/Button';
 import ActionButtons from '../../components/ui/ActionButtons';
 import SlidePanel from '../../components/ui/SlidePanel';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
-import SupplierForm from './SuppliersForm';
+import SupplierForm from './components/SuppliersForm';
 import { suppliers as initialSuppliers } from './data/Suppliers';
 import type { Supplier, SupplierCategory, SupplierStatus } from './types/Supplier';
 import { useNavigate } from 'react-router-dom';

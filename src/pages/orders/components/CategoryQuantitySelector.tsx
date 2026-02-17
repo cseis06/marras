@@ -1,6 +1,6 @@
 import { IconPlus, IconMinus, IconX, IconCheck } from '@tabler/icons-react';
-import type { DishCategory } from '../platos/types/DishCategory';
-import type { OrderItem } from './types/order';
+import type { DishCategory } from '../../platos/types/DishCategory';
+import type { OrderItem } from '../types/order';
 
 interface CategoryQuantitySelectorProps {
   categories: DishCategory[];

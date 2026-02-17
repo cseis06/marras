@@ -1,7 +1,8 @@
 interface BadgeProps {
   variant: 'success' | 'warning' | 'error' | 'info' | 'orange' | 'neutral';
-  size: 'xxs' | 'xs' | 'md' | 'lg' | 'xl'  
+  size?: 'xxs' | 'xs' | 'md' | 'lg' | 'xl';
   children: React.ReactNode;
+  className?: string;
 }
 
 const variantStyles = {
@@ -14,16 +15,16 @@ const variantStyles = {
 };
 
 const sizeStyles = {
-  xxs : 'text-[10px]',
+  xxs: 'text-[10px]',
   xs: 'text-sm',
   md: 'text-md',
   lg: 'text-lg',
   xl: 'text-2xl',
-}
+};
 
-export default function Badge({ variant, children, size }: BadgeProps) {
+export default function Badge({ variant, children, size = 'xs', className = '' }: BadgeProps) {
   return (
-    <span className={`px-2.5 py-1 rounded-full ${sizeStyles[size]} font-medium ${variantStyles[variant]}`}>
+    <span className={`px-2.5 py-1 rounded-full ${sizeStyles[size]} font-medium ${variantStyles[variant]} ${className}`}>
       {children}
     </span>
   );

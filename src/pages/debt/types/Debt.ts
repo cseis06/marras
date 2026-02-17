@@ -8,8 +8,8 @@ export type TransactionStatus = 'paid' | 'pending' | 'overdue' | 'partial';
 export interface ClientDebt {
   id: string;
   code: string;
-  document: string,
-  firstName: string,
+  document: string;
+  firstName: string;
   lastName: string;
   phone: string;
   email: string;
@@ -72,7 +72,8 @@ export interface DebtStats {
 
 export interface ClientRanking {
   id: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   code: string;
   score: number;
   totalHistoric?: number;
@@ -80,6 +81,10 @@ export interface ClientRanking {
   daysOverdue?: number;
   severity?: DebtSeverity;
 }
+
+export const getFullName = (client: { firstName: string; lastName: string }): string => {
+  return `${client.firstName} ${client.lastName}`.trim();
+};
 
 // Filtros
 export interface DebtFilters {

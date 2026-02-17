@@ -14,7 +14,7 @@ import ActionButtons from '../../components/ui/ActionButtons';
 import SlidePanel from '../../components/ui/SlidePanel';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
 import Button from '../../components/ui/Button';
-import DishCategoryForm from './DishCategoryForm';
+import DishCategoryForm from './components/DishCategoryForm';
 import { dishCategories as initialCategories } from './data/DishCategories';
 import type { DishCategory, DishCategoryFormData } from './types/DishCategory';
 
@@ -164,6 +164,7 @@ export default function DishCategories() {
             >
               <Badge
                 variant={isActive ? 'success' : 'neutral'}
+                size="xs"
                 className="cursor-pointer group-hover:ring-2 group-hover:ring-offset-1 group-hover:ring-gray-300 transition-all"
               >
                 {isActive ? 'Activo' : 'Inactivo'}
