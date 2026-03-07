@@ -80,11 +80,6 @@ export const sidebarData: SidebarData = {
               label: "Clientes",
               path: "/clients",
             },
-            {
-              id: "debt",
-              label: "Historial de morosidad",
-              path: "/clients/debt",
-            },
           ],
         },
         {
@@ -98,6 +93,11 @@ export const sidebarData: SidebarData = {
               id: "create-order",
               label: "Crear pedido",
               path: "/orders/create-order",
+            },
+            {
+              id: "kitchen",
+              label: "Cocina",
+              path: "/orders/kitchen",
             },
           ],
         },
@@ -122,6 +122,11 @@ export const sidebarData: SidebarData = {
               id: "suppliers",
               label: "Proveedores",
               path: "/management/suppliers",
+            },
+            {
+              id: "stock",
+              label: "Stock",
+              path: "/management/stock",
             },
           ],
         },
@@ -150,6 +155,11 @@ export const sidebarData: SidebarData = {
               id: "orders",
               label: "Ver pedidos",
               path: "/stats/orders",
+            },
+            {
+              id: "debt",
+              label: "Historial de morosidad",
+              path: "/stats/debt",
             },
           ],
         },

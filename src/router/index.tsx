@@ -14,6 +14,8 @@ import Expenses from "../pages/expenses/Expenses";
 import Employees from "../pages/employees/Employees";
 import { DebtPage } from "../pages/debt/Debt";
 import Payments from "../pages/payment/Payment";
+import KitchenManagement from "../pages/kitchen/KitchenManagement";
+import Stock from "../pages/stock/Stock";
 
 export const router = createBrowserRouter([
   // No Sidebar
@@ -36,7 +38,6 @@ export const router = createBrowserRouter([
 
       // Clientes
       { path: "/clients", element: <Clients /> },
-      { path: "/clients/debt", element: <DebtPage /> },
       
       // Platos
       { path: "/dishes/dish-categories", element: <DishCategories /> },
@@ -44,17 +45,20 @@ export const router = createBrowserRouter([
       
       // Pedidos
       { path: "/orders/create-order", element: <CreateOrder /> },
+      { path: '/orders/kitchen', element: <KitchenManagement /> },
 
       // Gestión 
       { path: "/management/payments", element: <Payments /> },
       { path: "/management/suppliers", element: <Suppliers /> },
       { path: "/management/expenses", element: <Expenses /> },
+      { path: "/management/stock", element: <Stock /> },
       
       // RRHH
       { path: "/hrm/employees", element: <Employees /> },
       
       // Informes
       { path: "/stats/orders", element: <OrdersDashboard /> },
+      { path: "/stats/debt", element: <DebtPage /> },
     ],
     // errorElement: <Error404 />
   },
