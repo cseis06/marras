@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -8,6 +8,7 @@ import {
   IconCategory,
   IconArrowLeft,
 } from '@tabler/icons-react';
+import gsap from 'gsap';
 import Table from '../../components/ui/Table';
 import Badge from '../../components/ui/Badge';
 import ActionButtons from '../../components/ui/ActionButtons';
@@ -34,6 +35,13 @@ export default function DishCategories() {
   
   const navigate = useNavigate();
 
+  // Refs para animaciones
+  const containerRef = useRef<HTMLDivElement>(null);
+  const backButtonRef = useRef<HTMLButtonElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const createButtonRef = useRef<HTMLDivElement>(null);
+  const tableRef = useRef<HTMLDivElement>(null);
+
   // Data state
   const [categories, setCategories] = useState<DishCategory[]>(initialCategories);
 
@@ -43,6 +51,46 @@ export default function DishCategories() {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState<DishCategory | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // Animaciones de entrada
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+      // Animación del botón "Volver"
+      tl.fromTo(
+        backButtonRef.current,
+        { opacity: 0, x: -20 },
+        { opacity: 1, x: 0, duration: 0.4 }
+      );
+
+      // Animación del header (título y descripción)
+      tl.fromTo(
+        headerRef.current,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.5 },
+        '-=0.2'
+      );
+
+      // Animación del botón "Nueva Categoría"
+      tl.fromTo(
+        createButtonRef.current,
+        { opacity: 0, scale: 0.9 },
+        { opacity: 1, scale: 1, duration: 0.4 },
+        '-=0.3'
+      );
+
+      // Animación de la tabla
+      tl.fromTo(
+        tableRef.current,
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.6 },
+        '-=0.2'
+      );
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, []);
 
   // Listas para validación de unicidad
   const existingCodes = useMemo(() => categories.map((c) => c.codigo), [categories]);
@@ -165,7 +213,7 @@ export default function DishCategories() {
               <Badge
                 variant={isActive ? 'success' : 'neutral'}
                 size="xs"
-                className="cursor-pointer group-hover:ring-2 group-hover:ring-offset-1 group-hover:ring-gray-300 transition-all"
+                className="text-xs cursor-pointer group-hover:ring-1 group-hover:ring-offset-1 group-hover:ring-gray-300 transition-all"
               >
                 {isActive ? 'Activo' : 'Inactivo'}
               </Badge>
@@ -200,46 +248,53 @@ export default function DishCategories() {
   );
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-2 lg:px-6 py-8">
+    <div ref={containerRef} className="max-w-7xl mx-auto px-4 sm:px-2 lg:px-6 py-8">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center justify-between">
           {/* Header */}
           <div className="mb-6">
             <button
+              ref={backButtonRef}
               onClick={() => navigate("/")}
-              className="flex items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors mb-4"
+              className="flex items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors mb-4 opacity-0"
             >
               <IconArrowLeft size={20} />
               <span className="text-sm">Volver</span>
             </button>
-            <h1 className="text-2xl font-bold text-gray-800">Gestiona las Categorías de Platos</h1>
-            <p className="text-sm text-gray-500 mt-1">
-              Puedes crear, editar o eliminar o ver información de las categorías de platos
-            </p>
+            <div ref={headerRef} className="opacity-0">
+              <h1 className="text-2xl font-bold text-gray-800">Gestiona las Categorías de Platos</h1>
+              <p className="text-sm text-gray-500 mt-1">
+                Puedes crear, editar o eliminar o ver información de las categorías de platos
+              </p>
+            </div>
           </div>
         </div>
-        <Button
-          variant="gradient"
-          icon={<IconPlus size={18} />}
-          onClick={handleCreate}
-          className='max-w-50 text-sm!'
-        >
-          Nueva Categoría
-        </Button>
+        <div ref={createButtonRef} className="opacity-0">
+          <Button
+            variant="gradient"
+            icon={<IconPlus size={18} />}
+            onClick={handleCreate}
+            className='max-w-50 text-sm!'
+          >
+            Nueva Categoría
+          </Button>
+        </div>
       </div>
 
       {/* Tabla */}
-      <Table
-        title={<IconCategory />}
-        data={categories}
-        columns={columns}
-        searchable
-        searchPlaceholder="Buscar por nombre o código..."
-        exportable
-        filterable
-        pageSize={5}
-      />
+      <div ref={tableRef} className="opacity-0">
+        <Table
+          title={<IconCategory />}
+          data={categories}
+          columns={columns}
+          searchable
+          searchPlaceholder="Buscar por nombre o código..."
+          exportable
+          filterable
+          pageSize={5}
+        />
+      </div>
 
       {/* Slide Panel para Crear/Editar */}
       <SlidePanel

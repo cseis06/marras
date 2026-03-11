@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState, useCallback, useRef, useEffect } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
 import {
   IconArrowLeft,
@@ -9,6 +9,7 @@ import {
   IconCalendar,
 } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
+import gsap from 'gsap';
 import Table from '../../components/ui/Table';
 import Badge from '../../components/ui/Badge';
 import Button from '../../components/ui/Button';
@@ -67,6 +68,13 @@ const formatDate = (dateString: string): string => {
 export default function Payments() {
   const navigate = useNavigate();
 
+  // Refs para animaciones
+  const containerRef = useRef<HTMLDivElement>(null);
+  const backButtonRef = useRef<HTMLButtonElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const clientSelectorRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+
   // Estado de datos
   const [orders, setOrders] = useState<Order[]>(initialOrders);
   const [, setPayments] = useState<Payment[]>(initialPayments);
@@ -84,6 +92,68 @@ export default function Payments() {
   // Estado del ConfirmDialog
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [pendingPayment, setPendingPayment] = useState<Omit<Payment, 'id' | 'createdAt'> | null>(null);
+
+  // Animaciones de entrada
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+      // Animación del botón "Volver"
+      tl.fromTo(
+        backButtonRef.current,
+        { opacity: 0, x: -20 },
+        { opacity: 1, x: 0, duration: 0.4 }
+      );
+
+      // Animación del header (título y descripción)
+      tl.fromTo(
+        headerRef.current,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.5 },
+        '-=0.2'
+      );
+
+      // Animación del selector de cliente
+      tl.fromTo(
+        clientSelectorRef.current,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.5 },
+        '-=0.3'
+      );
+
+      // Animación del contenido (cards + tabla o mensaje vacío)
+      tl.fromTo(
+        contentRef.current,
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.6 },
+        '-=0.2'
+      );
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  // Animación cuando se selecciona un cliente
+  useEffect(() => {
+    if (selectedClient && contentRef.current) {
+      const cards = contentRef.current.querySelectorAll('.stat-card-wrapper');
+      const tableSection = contentRef.current.querySelector('.table-section');
+
+      gsap.fromTo(
+        cards,
+        { opacity: 0, y: 20, scale: 0.95 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.4, stagger: 0.1, ease: 'power3.out' }
+      );
+
+      if (tableSection) {
+        gsap.fromTo(
+          tableSection,
+          { opacity: 0, y: 20 },
+          { opacity: 1, y: 0, duration: 0.5, delay: 0.3, ease: 'power3.out' }
+        );
+      }
+    }
+  }, [selectedClient]);
 
   // Pedidos pendientes del cliente seleccionado
   const clientOrders = useMemo(() => {
@@ -283,110 +353,123 @@ export default function Payments() {
   );
 
   return (
-    <div className="flex flex-col gap-6 max-w-7xl mx-auto px-4 sm:px-2 lg:px-6 py-8">
+    <div ref={containerRef} className="flex flex-col gap-6 max-w-7xl mx-auto px-4 sm:px-2 lg:px-6 py-8">
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
           <button
+            ref={backButtonRef}
             onClick={() => navigate('/')}
-            className="flex items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors mb-4"
+            className="flex items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors mb-4 opacity-0"
           >
             <IconArrowLeft size={20} />
             <span className="text-sm">Volver</span>
           </button>
-          <h1 className="text-2xl font-bold text-gray-800">Registro de Pagos</h1>
-          <p className="text-sm text-gray-500 mt-1">
-            Gestiona los pagos de clientes y sus pedidos pendientes
-          </p>
+          <div ref={headerRef} className="opacity-0">
+            <h1 className="text-2xl font-bold text-gray-800">Registro de Pagos</h1>
+            <p className="text-sm text-gray-500 mt-1">
+              Gestiona los pagos de clientes y sus pedidos pendientes
+            </p>
+          </div>
         </div>
       </div>
 
       {/* Selector de cliente */}
-      <ClientSelector
-        clients={clients}
-        selectedClient={selectedClient}
-        onSelect={handleSelectClient}
-      />
+      <div ref={clientSelectorRef} className="opacity-0">
+        <ClientSelector
+          clients={clients}
+          selectedClient={selectedClient}
+          onSelect={handleSelectClient}
+        />
+      </div>
 
       {/* Contenido cuando hay cliente seleccionado */}
-      {selectedClient && (
-        <>
-          {/* Cards de resumen */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <StatCard
-              title="Deuda Total"
-              value={formatCurrencyCompact(totalDebt)}
-              subtitle={`${clientOrders.length} pedidos pendientes`}
-              icon={<IconReceipt size={22} />}
-              variant="default"
-            />
-            <StatCard
-              title="Seleccionado"
-              value={formatCurrencyCompact(totalSelected)}
-              subtitle={`${selectedOrders.length} pedidos seleccionados`}
-              icon={<IconChecks size={22} />}
-              variant={selectedOrders.length > 0 ? 'success' : 'default'}
-            />
-            <StatCard
-              title="Saldo Restante"
-              value={formatCurrencyCompact(totalDebt - totalSelected)}
-              subtitle="Después del pago"
-              icon={<IconClock size={22} />}
-              variant={totalDebt - totalSelected > 0 ? 'warning' : 'success'}
-            />
-          </div>
-
-          {/* Tabla de pedidos y botón de pago */}
-          <div className="flex flex-col gap-4">
-            {/* Botón de registrar pago */}
-            <div className="flex justify-end">
-              <Button
-                variant="gradient"
-                icon={<IconCash size={18} />}
-                onClick={handleOpenPaymentPanel}
-                disabled={selectedOrders.length === 0}
-                className="text-sm!"
-              >
-                Registrar Pago ({formatCurrency(totalSelected)})
-              </Button>
+      <div ref={contentRef} className="opacity-0">
+        {selectedClient && (
+          <>
+            {/* Cards de resumen */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+              <div className="stat-card-wrapper">
+                <StatCard
+                  title="Deuda Total"
+                  value={formatCurrencyCompact(totalDebt)}
+                  subtitle={`${clientOrders.length} pedidos pendientes`}
+                  icon={<IconReceipt size={22} />}
+                  variant="default"
+                />
+              </div>
+              <div className="stat-card-wrapper">
+                <StatCard
+                  title="Seleccionado"
+                  value={formatCurrencyCompact(totalSelected)}
+                  subtitle={`${selectedOrders.length} pedidos seleccionados`}
+                  icon={<IconChecks size={22} />}
+                  variant={selectedOrders.length > 0 ? 'success' : 'default'}
+                />
+              </div>
+              <div className="stat-card-wrapper">
+                <StatCard
+                  title="Saldo Restante"
+                  value={formatCurrencyCompact(totalDebt - totalSelected)}
+                  subtitle="Después del pago"
+                  icon={<IconClock size={22} />}
+                  variant={totalDebt - totalSelected > 0 ? 'warning' : 'success'}
+                />
+              </div>
             </div>
 
-            {/* Tabla de pedidos pendientes */}
-            {clientOrders.length > 0 ? (
-              <Table<Order>
-                title={<IconReceipt />}
-                data={clientOrders}
-                columns={columns}
-                searchPlaceholder="Buscar pedido..."
-                pageSize={5}
-              />
-            ) : (
-              <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
-                <IconChecks size={48} className="mx-auto text-green-500 mb-4" />
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                  ¡Sin deudas pendientes!
-                </h3>
-                <p className="text-gray-500">
-                  Este cliente no tiene pedidos pendientes de pago.
-                </p>
+            {/* Tabla de pedidos y botón de pago */}
+            <div className="flex flex-col gap-4 table-section">
+              {/* Botón de registrar pago */}
+              <div className="flex justify-end">
+                <Button
+                  variant="gradient"
+                  icon={<IconCash size={18} />}
+                  onClick={handleOpenPaymentPanel}
+                  disabled={selectedOrders.length === 0}
+                  className="text-sm!"
+                >
+                  Registrar Pago ({formatCurrency(totalSelected)})
+                </Button>
               </div>
-            )}
-          </div>
-        </>
-      )}
 
-      {/* Mensaje cuando no hay cliente seleccionado */}
-      {!selectedClient && (
-        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
-          <IconCash size={48} className="mx-auto text-gray-300 mb-4" />
-          <h3 className="text-lg font-semibold text-gray-800 mb-2">
-            Selecciona un cliente
-          </h3>
-          <p className="text-gray-500">
-            Busca un cliente para ver sus pedidos pendientes y registrar pagos.
-          </p>
-        </div>
-      )}
+              {/* Tabla de pedidos pendientes */}
+              {clientOrders.length > 0 ? (
+                <Table<Order>
+                  title={<IconReceipt />}
+                  data={clientOrders}
+                  columns={columns}
+                  searchPlaceholder="Buscar pedido..."
+                  pageSize={5}
+                />
+              ) : (
+                <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+                  <IconChecks size={48} className="mx-auto text-green-500 mb-4" />
+                  <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                    ¡Sin deudas pendientes!
+                  </h3>
+                  <p className="text-gray-500">
+                    Este cliente no tiene pedidos pendientes de pago.
+                  </p>
+                </div>
+              )}
+            </div>
+          </>
+        )}
+
+        {/* Mensaje cuando no hay cliente seleccionado */}
+        {!selectedClient && (
+          <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+            <IconCash size={48} className="mx-auto text-gray-300 mb-4" />
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">
+              Selecciona un cliente
+            </h3>
+            <p className="text-gray-500">
+              Busca un cliente para ver sus pedidos pendientes y registrar pagos.
+            </p>
+          </div>
+        )}
+      </div>
 
       {/* SlidePanel para registrar pago */}
       <SlidePanel

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import {
   IconShoppingCart,
   IconCash,
@@ -26,6 +26,7 @@ import {
   Legend,
 } from 'recharts';
 import { useNavigate } from 'react-router-dom';
+import gsap from 'gsap';
 
 // Componentes
 import StatCard from '../../components/ui/StatCard';
@@ -52,6 +53,7 @@ import { orderStatusLabels } from './types/Order';
 
 // Formateador de moneda
 const formatCurrency = (value: number): string => {
+  if (value === undefined || value === null) return '₲ 0';
   if (value >= 1000000) {
     return `₲ ${(value / 1000000).toFixed(1)}M`;
   }
@@ -62,6 +64,7 @@ const formatCurrency = (value: number): string => {
 };
 
 const formatFullCurrency = (value: number): string => {
+  if (value === undefined || value === null) return '₲ 0';
   return new Intl.NumberFormat('es-PY', {
     style: 'currency',
     currency: 'PYG',
@@ -95,6 +98,89 @@ export default function OrdersDashboard() {
   const navigate = useNavigate();
   const [period, setPeriod] = useState<TimePeriod>('month');
   const [isRefreshing, setIsRefreshing] = useState(false);
+
+  // Refs para animaciones
+  const containerRef = useRef<HTMLDivElement>(null);
+  const backButtonRef = useRef<HTMLButtonElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const actionsRef = useRef<HTMLDivElement>(null);
+  const statsRef = useRef<HTMLDivElement>(null);
+  const mainChartsRef = useRef<HTMLDivElement>(null);
+  const barChartsRef = useRef<HTMLDivElement>(null);
+  const rankingsRef = useRef<HTMLDivElement>(null);
+  const footerRef = useRef<HTMLDivElement>(null);
+
+  // Animaciones de entrada
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+      // Animación del botón "Volver"
+      tl.fromTo(
+        backButtonRef.current,
+        { opacity: 0, x: -20 },
+        { opacity: 1, x: 0, duration: 0.4 }
+      );
+
+      // Animación del header (título y descripción)
+      tl.fromTo(
+        headerRef.current,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.5 },
+        '-=0.2'
+      );
+
+      // Animación de las acciones (PeriodSelector + botón refresh)
+      tl.fromTo(
+        actionsRef.current,
+        { opacity: 0, scale: 0.9 },
+        { opacity: 1, scale: 1, duration: 0.4 },
+        '-=0.3'
+      );
+
+      // Animación de las StatCards (stagger)
+      tl.fromTo(
+        statsRef.current?.children || [],
+        { opacity: 0, y: 20, scale: 0.95 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.4, stagger: 0.08 },
+        '-=0.2'
+      );
+
+      // Animación de los gráficos principales (stagger)
+      tl.fromTo(
+        mainChartsRef.current?.children || [],
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.5, stagger: 0.15 },
+        '-=0.2'
+      );
+
+      // Animación de los gráficos de barras (stagger)
+      tl.fromTo(
+        barChartsRef.current?.children || [],
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.5, stagger: 0.15 },
+        '-=0.3'
+      );
+
+      // Animación de los rankings (stagger)
+      tl.fromTo(
+        rankingsRef.current?.children || [],
+        { opacity: 0, y: 30, scale: 0.98 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.4, stagger: 0.1 },
+        '-=0.3'
+      );
+
+      // Animación del footer
+      tl.fromTo(
+        footerRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.4 },
+        '-=0.2'
+      );
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, []);
 
   // Datos filtrados
   const filteredOrders = useMemo(
@@ -207,326 +293,332 @@ export default function OrdersDashboard() {
   }));
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div ref={containerRef} className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
             <button
+              ref={backButtonRef}
               onClick={() => navigate('/')}
-              className="flex items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors mb-3"
+              className="flex items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors mb-3 opacity-0"
             >
               <IconArrowLeft size={20} />
               <span className="text-sm">Volver</span>
             </button>
-            <h1 className="text-2xl font-bold text-gray-800">
-              Dashboard de Pedidos
-            </h1>
-            <p className="text-sm text-gray-500 mt-1">
-              Estadísticas y métricas de rendimiento
-            </p>
+            <div ref={headerRef} className="opacity-0">
+              <h1 className="text-2xl font-bold text-gray-800">
+                Dashboard de Pedidos
+              </h1>
+              <p className="text-sm text-gray-500 mt-1">
+                Estadísticas y métricas de rendimiento
+              </p>
+            </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={handleRefresh}
-              disabled={isRefreshing}
-              className="p-2.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 
-                        border border-gray-200 rounded-xl transition-all duration-200
-                        disabled:opacity-50 disabled:cursor-not-allowed"
-              title="Actualizar"
-            >
-              <IconRefresh
-                size={18}
-                className={`transition-transform duration-500 ${isRefreshing ? 'animate-spin' : ''}`}
-              />
-            </button>
+          <div ref={actionsRef} className="flex items-center gap-3 opacity-0">
             <PeriodSelector value={period} onChange={setPeriod} />
+            <button
+              onClick={handleRefresh}
+              className={`
+                p-2.5 rounded-xl bg-white border border-gray-200 text-gray-500
+                hover:text-gray-700 hover:border-gray-300 transition-all
+                ${isRefreshing ? 'animate-spin' : ''}
+              `}
+              title="Actualizar datos"
+            >
+              <IconRefresh size={20} />
+            </button>
           </div>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <StatCard
-            title="Total Pedidos"
-            value={stats.totalOrders.toLocaleString('es-PY')}
-            subtitle={`${stats.pendingOrders} pendientes`}
-            icon={<IconShoppingCart size={22} />}
-            variant="success"
-            trend={{ value: 12.5, label: 'vs período anterior' }}
-          />
-          <StatCard
-            title="Ingresos Totales"
-            value={formatCurrency(stats.totalRevenue)}
-            subtitle={`Promedio: ${formatCurrency(stats.averageOrderValue)}`}
-            icon={<IconCash size={22} />}
-            variant="info"
-            trend={{ value: 8.3, label: 'vs período anterior' }}
-          />
-          <StatCard
-            title="Pedidos Entregados"
-            value={stats.deliveredOrders.toLocaleString('es-PY')}
-            subtitle={`${((stats.deliveredOrders / stats.totalOrders) * 100).toFixed(1)}% del total`}
-            icon={<IconCircleCheck size={22} />}
-            variant="success"
-          />
-          <StatCard
-            title="Pedidos Recurrentes"
-            value={stats.recurrentOrders.toLocaleString('es-PY')}
-            subtitle={`${((stats.recurrentOrders / stats.totalOrders) * 100).toFixed(1)}% del total`}
-            icon={<IconRepeat size={22} />}
-            variant="warning"
-          />
-        </div>
-
-        {/* Segunda fila de stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-          <StatCard
-            title="Total Platos"
-            value={stats.totalItems.toLocaleString('es-PY')}
-            icon={<IconReceipt size={22} />}
-            variant="default"
-          />
-          <StatCard
-            title="Pedidos Cancelados"
-            value={stats.cancelledOrders.toLocaleString('es-PY')}
-            subtitle={`${((stats.cancelledOrders / stats.totalOrders) * 100).toFixed(1)}% del total`}
-            icon={<IconCircleX size={22} />}
-            variant="error"
-          />
-          <StatCard
-            title="Pedidos Pendientes"
-            value={stats.pendingOrders.toLocaleString('es-PY')}
-            icon={<IconClock size={22} />}
-            variant="warning"
-          />
+        <div ref={statsRef} className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
+          <div className="opacity-0">
+            <StatCard
+              title="Total Pedidos"
+              value={stats.totalOrders}
+              subtitle="En el período"
+              icon={<IconShoppingCart size={20} />}
+              variant="default"
+            />
+          </div>
+          <div className="opacity-0">
+            <StatCard
+              title="Ingresos"
+              value={formatCurrency(stats.totalRevenue)}
+              subtitle="Facturado"
+              icon={<IconCash size={20} />}
+              variant="success"
+            />
+          </div>
+          <div className="opacity-0">
+            <StatCard
+              title="Ticket Promedio"
+              value={formatCurrency(stats.averageTicket)}
+              subtitle="Por pedido"
+              icon={<IconReceipt size={20} />}
+              variant="info"
+            />
+          </div>
+          <div className="opacity-0">
+            <StatCard
+              title="Entregados"
+              value={stats.deliveredOrders}
+              subtitle={`${stats.totalOrders > 0 ? ((stats.deliveredOrders / stats.totalOrders) * 100).toFixed(0) : 0}% del total`}
+              icon={<IconCircleCheck size={20} />}
+              variant="success"
+            />
+          </div>
+          <div className="opacity-0">
+            <StatCard
+              title="Cancelados"
+              value={stats.canceledOrders}
+              subtitle={`${stats.totalOrders > 0 ? ((stats.canceledOrders / stats.totalOrders) * 100).toFixed(0) : 0}% del total`}
+              icon={<IconCircleX size={20} />}
+              variant="error"
+            />
+          </div>
         </div>
 
         {/* Gráficos principales */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          {/* Tendencia de pedidos e ingresos */}
-          <ChartCard
-            title="Tendencia de Pedidos"
-            subtitle={`Últimos ${period === 'day' ? '24 horas' : period === 'week' ? '7 días' : period === 'month' ? '30 días' : '12 meses'}`}
-            className="lg:col-span-2"
-          >
-            <div className="h-72">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={areaChartData}>
-                  <defs>
-                    <linearGradient id="colorOrders" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor={CHART_COLORS.primary} stopOpacity={0.3} />
-                      <stop offset="95%" stopColor={CHART_COLORS.primary} stopOpacity={0} />
-                    </linearGradient>
-                    <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor={CHART_COLORS.secondary} stopOpacity={0.3} />
-                      <stop offset="95%" stopColor={CHART_COLORS.secondary} stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                  <XAxis
-                    dataKey="dateFormatted"
-                    tick={{ fontSize: 11, fill: '#6b7280' }}
-                    tickLine={false}
-                    axisLine={{ stroke: '#e5e7eb' }}
-                  />
-                  <YAxis
-                    yAxisId="left"
-                    tick={{ fontSize: 11, fill: '#6b7280' }}
-                    tickLine={false}
-                    axisLine={{ stroke: '#e5e7eb' }}
-                  />
-                  <YAxis
-                    yAxisId="right"
-                    orientation="right"
-                    tick={{ fontSize: 11, fill: '#6b7280' }}
-                    tickLine={false}
-                    axisLine={{ stroke: '#e5e7eb' }}
-                    tickFormatter={(v) => formatCurrency(v)}
-                  />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Area
-                    yAxisId="left"
-                    type="monotone"
-                    dataKey="orders"
-                    name="Pedidos"
-                    stroke={CHART_COLORS.primary}
-                    strokeWidth={2}
-                    fill="url(#colorOrders)"
-                  />
-                  <Area
-                    yAxisId="right"
-                    type="monotone"
-                    dataKey="revenue"
-                    name="ingresos"
-                    stroke={CHART_COLORS.secondary}
-                    strokeWidth={2}
-                    fill="url(#colorRevenue)"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </ChartCard>
+        <div ref={mainChartsRef} className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          <div className="lg:col-span-2 opacity-0">
+            <ChartCard
+              title="Tendencia de Pedidos"
+              subtitle={`Últimos ${period === 'day' ? '24 horas' : period === 'week' ? '7 días' : period === 'month' ? '30 días' : '12 meses'}`}
+            >
+              <div className="h-72">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={areaChartData}>
+                    <defs>
+                      <linearGradient id="colorOrders" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor={CHART_COLORS.primary} stopOpacity={0.3} />
+                        <stop offset="95%" stopColor={CHART_COLORS.primary} stopOpacity={0} />
+                      </linearGradient>
+                      <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor={CHART_COLORS.secondary} stopOpacity={0.3} />
+                        <stop offset="95%" stopColor={CHART_COLORS.secondary} stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <XAxis
+                      dataKey="dateFormatted"
+                      tick={{ fontSize: 11, fill: '#6b7280' }}
+                      tickLine={false}
+                      axisLine={{ stroke: '#e5e7eb' }}
+                    />
+                    <YAxis
+                      yAxisId="left"
+                      tick={{ fontSize: 11, fill: '#6b7280' }}
+                      tickLine={false}
+                      axisLine={{ stroke: '#e5e7eb' }}
+                    />
+                    <YAxis
+                      yAxisId="right"
+                      orientation="right"
+                      tick={{ fontSize: 11, fill: '#6b7280' }}
+                      tickLine={false}
+                      axisLine={{ stroke: '#e5e7eb' }}
+                      tickFormatter={(v) => formatCurrency(v)}
+                    />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Area
+                      yAxisId="left"
+                      type="monotone"
+                      dataKey="orders"
+                      name="Pedidos"
+                      stroke={CHART_COLORS.primary}
+                      strokeWidth={2}
+                      fill="url(#colorOrders)"
+                    />
+                    <Area
+                      yAxisId="right"
+                      type="monotone"
+                      dataKey="revenue"
+                      name="ingresos"
+                      stroke={CHART_COLORS.secondary}
+                      strokeWidth={2}
+                      fill="url(#colorRevenue)"
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </ChartCard>
+          </div>
 
           {/* Estado de pedidos */}
-          <ChartCard title="Estado de Pedidos" subtitle="Distribución actual">
-            <div className="h-72">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={statusChartData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={50}
-                    outerRadius={80}
-                    paddingAngle={2}
-                    dataKey="value"
-                  >
-                    {statusChartData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    formatter={(value) => [`${value ?? 0} pedidos`, '']}
-                  />
-                  <Legend
-                    layout="vertical"
-                    align="right"
-                    verticalAlign="middle"
-                    iconType="circle"
-                    iconSize={8}
-                    wrapperStyle={{ fontSize: '11px' }}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-          </ChartCard>
+          <div className="opacity-0">
+            <ChartCard title="Estado de Pedidos" subtitle="Distribución actual">
+              <div className="h-72">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={statusChartData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={50}
+                      outerRadius={80}
+                      paddingAngle={2}
+                      dataKey="value"
+                    >
+                      {statusChartData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      formatter={(value) => [`${value ?? 0} pedidos`, '']}
+                    />
+                    <Legend
+                      layout="vertical"
+                      align="right"
+                      verticalAlign="middle"
+                      iconType="circle"
+                      iconSize={8}
+                      wrapperStyle={{ fontSize: '11px' }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </ChartCard>
+          </div>
         </div>
 
         {/* Categorías más pedidas - Gráfico de barras */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <ChartCard
-            title="Categorías Más Pedidas"
-            subtitle="Por cantidad de platos"
-            action={
-              <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-lg">
-                Top 6
-              </span>
-            }
-          >
-            <div className="h-72">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={categoryChartData} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" horizontal={false} />
-                  <XAxis
-                    type="number"
-                    tick={{ fontSize: 11, fill: '#6b7280' }}
-                    tickLine={false}
-                    axisLine={{ stroke: '#e5e7eb' }}
-                  />
-                  <YAxis
-                    type="category"
-                    dataKey="name"
-                    tick={{ fontSize: 11, fill: '#6b7280' }}
-                    tickLine={false}
-                    axisLine={false}
-                    width={100}
-                  />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Bar
-                    dataKey="cantidad"
-                    name="Cantidad"
-                    fill={CHART_COLORS.primary}
-                    radius={[0, 4, 4, 0]}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </ChartCard>
+        <div ref={barChartsRef} className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <div className="opacity-0">
+            <ChartCard
+              title="Categorías Más Pedidas"
+              subtitle="Por cantidad de platos"
+              action={
+                <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-lg">
+                  Top 6
+                </span>
+              }
+            >
+              <div className="h-72">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={categoryChartData} layout="vertical">
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" horizontal={false} />
+                    <XAxis
+                      type="number"
+                      tick={{ fontSize: 11, fill: '#6b7280' }}
+                      tickLine={false}
+                      axisLine={{ stroke: '#e5e7eb' }}
+                    />
+                    <YAxis
+                      type="category"
+                      dataKey="name"
+                      tick={{ fontSize: 11, fill: '#6b7280' }}
+                      tickLine={false}
+                      axisLine={false}
+                      width={100}
+                    />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Bar
+                      dataKey="cantidad"
+                      name="Cantidad"
+                      fill={CHART_COLORS.primary}
+                      radius={[0, 4, 4, 0]}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </ChartCard>
+          </div>
 
-          <ChartCard
-            title="Ingresos por Categoría"
-            subtitle="Contribución al revenue"
-            action={
-              <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-lg">
-                Top 6
-              </span>
-            }
-          >
-            <div className="h-72">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={categoryChartData} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" horizontal={false} />
-                  <XAxis
-                    type="number"
-                    tick={{ fontSize: 11, fill: '#6b7280' }}
-                    tickLine={false}
-                    axisLine={{ stroke: '#e5e7eb' }}
-                    tickFormatter={(v) => formatCurrency(v)}
-                  />
-                  <YAxis
-                    type="category"
-                    dataKey="name"
-                    tick={{ fontSize: 11, fill: '#6b7280' }}
-                    tickLine={false}
-                    axisLine={false}
-                    width={100}
-                  />
-                  <Tooltip
-                   formatter={(value) => [formatFullCurrency(Number(value) || 0), 'Ingresos']}
-                  />
-                  <Bar
-                    dataKey="ingresos"
-                    name="Ingresos"
-                    fill={CHART_COLORS.secondary}
-                    radius={[0, 4, 4, 0]}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </ChartCard>
+          <div className="opacity-0">
+            <ChartCard
+              title="Ingresos por Categoría"
+              subtitle="Contribución al revenue"
+              action={
+                <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-lg">
+                  Top 6
+                </span>
+              }
+            >
+              <div className="h-72">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={categoryChartData} layout="vertical">
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" horizontal={false} />
+                    <XAxis
+                      type="number"
+                      tick={{ fontSize: 11, fill: '#6b7280' }}
+                      tickLine={false}
+                      axisLine={{ stroke: '#e5e7eb' }}
+                      tickFormatter={(v) => formatCurrency(v)}
+                    />
+                    <YAxis
+                      type="category"
+                      dataKey="name"
+                      tick={{ fontSize: 11, fill: '#6b7280' }}
+                      tickLine={false}
+                      axisLine={false}
+                      width={100}
+                    />
+                    <Tooltip
+                     formatter={(value) => [formatFullCurrency(Number(value) || 0), 'Ingresos']}
+                    />
+                    <Bar
+                      dataKey="ingresos"
+                      name="Ingresos"
+                      fill={CHART_COLORS.secondary}
+                      radius={[0, 4, 4, 0]}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </ChartCard>
+          </div>
         </div>
 
         {/* Rankings */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <ChartCard title="Top Clientes" subtitle="Por ingresos generados">
-            <RankingTable
-              items={topClientsRanking}
-              valueLabel="Ingresos"
-              emptyMessage="Sin datos de clientes"
-            />
-          </ChartCard>
+        <div ref={rankingsRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="opacity-0">
+            <ChartCard title="Top Clientes" subtitle="Por ingresos generados">
+              <RankingTable
+                items={topClientsRanking}
+                valueLabel="Ingresos"
+                emptyMessage="Sin datos de clientes"
+              />
+            </ChartCard>
+          </div>
 
-          <ChartCard title="Top Categorías" subtitle="Por ingresos generados">
-            <RankingTable
-              items={topCategories}
-              valueLabel="Ingresos"
-              emptyMessage="Sin datos de categorías"
-            />
-          </ChartCard>
+          <div className="opacity-0">
+            <ChartCard title="Top Categorías" subtitle="Por ingresos generados">
+              <RankingTable
+                items={topCategories}
+                valueLabel="Ingresos"
+                emptyMessage="Sin datos de categorías"
+              />
+            </ChartCard>
+          </div>
 
-          <ChartCard title="Top Chefs" subtitle="Por pedidos preparados">
-            <RankingTable
-              items={topChefsRanking}
-              valueLabel="Ingresos"
-              emptyMessage="Sin datos de chefs"
-            />
-          </ChartCard>
+          <div className="opacity-0">
+            <ChartCard title="Top Chefs" subtitle="Por pedidos preparados">
+              <RankingTable
+                items={topChefsRanking}
+                valueLabel="Ingresos"
+                emptyMessage="Sin datos de chefs"
+              />
+            </ChartCard>
+          </div>
 
-          <ChartCard title="Top Repartidores" subtitle="Por entregas realizadas">
-            <RankingTable
-              items={topDeliveryRanking}
-              valueLabel="Entregas"
-              emptyMessage="Sin datos de repartidores"
-            />
-          </ChartCard>
+          <div className="opacity-0">
+            <ChartCard title="Top Repartidores" subtitle="Por entregas realizadas">
+              <RankingTable
+                items={topDeliveryRanking}
+                valueLabel="Entregas"
+                emptyMessage="Sin datos de repartidores"
+              />
+            </ChartCard>
+          </div>
         </div>
 
         {/* Footer info */}
-        <div className="mt-8 text-center">
+        <div ref={footerRef} className="mt-8 text-center opacity-0">
           <p className="text-xs text-gray-400">
-            Datos actualizados en tiempo real • Última actualización:{' '}
+            Última actualización:{' '}
             {new Date().toLocaleString('es-PY')}
           </p>
         </div>

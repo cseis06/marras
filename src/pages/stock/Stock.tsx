@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useRef, useEffect } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
 import {
   IconHistory,
@@ -11,6 +11,7 @@ import {
   IconPackageExport,
   IconAlertTriangle,
 } from '@tabler/icons-react';
+import gsap from 'gsap';
 import Table from '../../components/ui/Table';
 import Badge from '../../components/ui/Badge';
 import Button from '../../components/ui/Button';
@@ -30,6 +31,14 @@ const columnHelper = createColumnHelper<StockItem>();
 
 export default function Stock() {
   const navigate = useNavigate();
+
+  // Refs para animaciones
+  const containerRef = useRef<HTMLDivElement>(null);
+  const backButtonRef = useRef<HTMLButtonElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const createButtonRef = useRef<HTMLDivElement>(null);
+  const cardsRef = useRef<HTMLDivElement>(null);
+  const tableRef = useRef<HTMLDivElement>(null);
 
   // Estado de datos
   const [stockItems, setStockItems] = useState<StockItem[]>(initialStockItems);
@@ -54,6 +63,54 @@ export default function Stock() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState<StockItem | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // Animaciones de entrada
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+      // Animación del botón "Volver"
+      tl.fromTo(
+        backButtonRef.current,
+        { opacity: 0, x: -20 },
+        { opacity: 1, x: 0, duration: 0.4 }
+      );
+
+      // Animación del header (título y descripción)
+      tl.fromTo(
+        headerRef.current,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.5 },
+        '-=0.2'
+      );
+
+      // Animación del botón "Nuevo Producto"
+      tl.fromTo(
+        createButtonRef.current,
+        { opacity: 0, scale: 0.9 },
+        { opacity: 1, scale: 1, duration: 0.4 },
+        '-=0.3'
+      );
+
+      // Animación de las cards (stagger)
+      tl.fromTo(
+        cardsRef.current?.children || [],
+        { opacity: 0, y: 20, scale: 0.95 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.4, stagger: 0.08 },
+        '-=0.2'
+      );
+
+      // Animación de la tabla
+      tl.fromTo(
+        tableRef.current,
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.6 },
+        '-=0.2'
+      );
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, []);
 
   // Estadísticas calculadas
   const stats = useMemo(() => {
@@ -243,12 +300,14 @@ export default function Stock() {
         cell: (info) => (
           <div>
             <p className="font-medium text-gray-800">{info.getValue()}</p>
-            <p className="text-xs text-gray-500">{info.row.original.category}</p>
+            {info.row.original.category && (
+              <p className="text-xs text-gray-500">{info.row.original.category}</p>
+            )}
           </div>
         ),
       }),
       columnHelper.accessor('currentQuantity', {
-        header: 'Stock',
+        header: 'Cantidad',
         cell: (info) => {
           const item = info.row.original;
           return (
@@ -349,83 +408,101 @@ export default function Stock() {
   );
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-2 lg:px-6 py-8">
+    <div ref={containerRef} className="max-w-7xl mx-auto px-4 sm:px-2 lg:px-6 py-8">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
           <button
+            ref={backButtonRef}
             onClick={() => navigate('/')}
-            className="flex items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors mb-4"
+            className="flex items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors mb-4 opacity-0"
           >
             <IconArrowLeft size={20} />
             <span className="text-sm">Volver</span>
           </button>
-          <h1 className="text-2xl font-bold text-gray-800">Gestión de Stock</h1>
-          <p className="text-sm text-gray-500 mt-1">
-            Administra el inventario, registra entradas y salidas de productos
-          </p>
+          <div ref={headerRef} className="opacity-0">
+            <h1 className="text-2xl font-bold text-gray-800">Gestión de Stock</h1>
+            <p className="text-sm text-gray-500 mt-1">
+              Administra el inventario, registra entradas y salidas de productos
+            </p>
+          </div>
         </div>
-        <Button
-          variant="gradient"
-          icon={<IconPlus size={18} />}
-          onClick={handleCreateProduct}
-          className="max-w-50 text-sm!"
-        >
-          Nuevo Producto
-        </Button>
+        <div ref={createButtonRef} className="opacity-0">
+          <Button
+            variant="gradient"
+            icon={<IconPlus size={18} />}
+            onClick={handleCreateProduct}
+            className="max-w-50 text-sm!"
+          >
+            Nuevo Producto
+          </Button>
+        </div>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-6">
-        <StatCard
-          title="Total Productos"
-          value={stats.total}
-          icon={<IconPackage size={20} />}
-          variant="default"
-        />
-        <StatCard
-          title="Disponible"
-          value={stats.disponible}
-          icon={<IconPackage size={20} />}
-          variant="success"
-        />
-        <StatCard
-          title="Stock Bajo"
-          value={stats.bajo}
-          icon={<IconAlertTriangle size={20} />}
-          variant="warning"
-        />
-        <StatCard
-          title="Crítico"
-          value={stats.critico}
-          icon={<IconAlertTriangle size={20} />}
-          variant="error"
-        />
-        <StatCard
-          title="Agotado"
-          value={stats.agotado}
-          icon={<IconPackageExport size={20} />}
-          variant="default"
-        />
-        <StatCard
-          title="Valor Total"
-          value={formatCurrency(stats.valorTotal)}
-          icon={<IconPackage size={20} />}
-          variant="info"
-          className="col-span-2 md:col-span-1"
-        />
+      <div ref={cardsRef} className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-6">
+        <div className="opacity-0">
+          <StatCard
+            title="Total Productos"
+            value={stats.total}
+            icon={<IconPackage size={20} />}
+            variant="default"
+          />
+        </div>
+        <div className="opacity-0">
+          <StatCard
+            title="Disponible"
+            value={stats.disponible}
+            icon={<IconPackage size={20} />}
+            variant="success"
+          />
+        </div>
+        <div className="opacity-0">
+          <StatCard
+            title="Stock Bajo"
+            value={stats.bajo}
+            icon={<IconAlertTriangle size={20} />}
+            variant="warning"
+          />
+        </div>
+        <div className="opacity-0">
+          <StatCard
+            title="Crítico"
+            value={stats.critico}
+            icon={<IconAlertTriangle size={20} />}
+            variant="error"
+          />
+        </div>
+        <div className="opacity-0">
+          <StatCard
+            title="Agotado"
+            value={stats.agotado}
+            icon={<IconPackageExport size={20} />}
+            variant="default"
+          />
+        </div>
+        {/*<div className="opacity-0 col-span-2 md:col-span-1">
+          <StatCard
+            title="Valor Total"
+            value={formatCurrency(stats.valorTotal)}
+            icon={<IconPackage size={20} />}
+            variant="info"
+          />
+        </div>*/}
       </div>
 
       {/* Tabla */}
-      <Table<StockItem>
-        title={<IconPackage />}
-        data={stockItems}
-        columns={columns}
-        searchPlaceholder="Buscar producto..."
-        onExport={handleExport}
-        onFilter={handleFilter}
-        pageSize={10}
-      />
+      <div ref={tableRef} className="opacity-0">
+        <Table<StockItem>
+          title={<IconPackage />}
+          data={stockItems}
+          columns={columns}
+          searchPlaceholder="Buscar producto..."
+          onExport={handleExport}
+          onFilter={handleFilter}
+          pageSize={10}
+        />
+      </div>
 
       {/* SlidePanel para Crear/Editar Producto */}
       <SlidePanel

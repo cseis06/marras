@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useRef, useEffect } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
 import {
   IconEdit,
@@ -10,6 +10,7 @@ import {
   IconClock,
   IconCheck,
 } from '@tabler/icons-react';
+import gsap from 'gsap';
 import Table from '../../components/ui/Table';
 import Badge from '../../components/ui/Badge';
 import Button from '../../components/ui/Button';
@@ -130,6 +131,14 @@ const filterExpensesByPeriod = (expenses: Expense[], period: TimePeriod): Expens
 export default function Expenses() {
   const navigate = useNavigate();
 
+  // Refs para animaciones
+  const containerRef = useRef<HTMLDivElement>(null);
+  const backButtonRef = useRef<HTMLButtonElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const actionsRef = useRef<HTMLDivElement>(null);
+  const cardsRef = useRef<HTMLDivElement>(null);
+  const tableRef = useRef<HTMLDivElement>(null);
+
   // Estado de datos
   const [expenses, setExpenses] = useState<Expense[]>(initialExpenses);
 
@@ -145,6 +154,54 @@ export default function Expenses() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [expenseToDelete, setExpenseToDelete] = useState<Expense | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // Animaciones de entrada
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+      // Animación del botón "Volver"
+      tl.fromTo(
+        backButtonRef.current,
+        { opacity: 0, x: -20 },
+        { opacity: 1, x: 0, duration: 0.4 }
+      );
+
+      // Animación del header (título y descripción)
+      tl.fromTo(
+        headerRef.current,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.5 },
+        '-=0.2'
+      );
+
+      // Animación de las acciones (PeriodSelector + botón)
+      tl.fromTo(
+        actionsRef.current,
+        { opacity: 0, scale: 0.9 },
+        { opacity: 1, scale: 1, duration: 0.4 },
+        '-=0.3'
+      );
+
+      // Animación de las cards (stagger)
+      tl.fromTo(
+        cardsRef.current?.children || [],
+        { opacity: 0, y: 20, scale: 0.95 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.4, stagger: 0.1 },
+        '-=0.2'
+      );
+
+      // Animación de la tabla
+      tl.fromTo(
+        tableRef.current,
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.6 },
+        '-=0.2'
+      );
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, []);
 
   // Handlers del SlidePanel
   const handleCreate = () => {
@@ -344,24 +401,27 @@ export default function Expenses() {
   };
 
   return (
-    <div className="flex flex-col gap-6 max-w-7xl mx-auto px-4 sm:px-2 lg:px-6 py-8">
+    <div ref={containerRef} className="flex flex-col gap-6 max-w-7xl mx-auto px-4 sm:px-2 lg:px-6 py-8">
       {/* Header con botón crear */}
       <div className="flex items-start justify-between">
         {/* Header */}
         <div>
           <button
+            ref={backButtonRef}
             onClick={() => navigate('/')}
-            className="flex items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors mb-4"
+            className="flex items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors mb-4 opacity-0"
           >
             <IconArrowLeft size={20} />
             <span className="text-sm">Volver</span>
           </button>
-          <h1 className="text-2xl font-bold text-gray-800">Gestión de Gastos</h1>
-          <p className="text-sm text-gray-500 mt-1">
-            Registra y administra los gastos del negocio
-          </p>
+          <div ref={headerRef} className="opacity-0">
+            <h1 className="text-2xl font-bold text-gray-800">Gestión de Gastos</h1>
+            <p className="text-sm text-gray-500 mt-1">
+              Registra y administra los gastos del negocio
+            </p>
+          </div>
         </div>
-        <div className="flex flex-col items-end gap-2">
+        <div ref={actionsRef} className="flex flex-col items-end gap-2 opacity-0">
           <PeriodSelector
             value={selectedPeriod}
             onChange={setSelectedPeriod}
@@ -379,40 +439,48 @@ export default function Expenses() {
       </div>
 
       {/* Cards de resumen */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <StatCard
-          title="Total del Período"
-          value={formatCurrencyCompact(totalGeneral)}
-          subtitle={`${filteredExpenses.filter((e) => e.status !== 'anulado').length} gastos registrados`}
-          icon={<IconReceipt size={22} />}
-          variant="default"
-        />
-        <StatCard
-          title="Total Pagado"
-          value={formatCurrencyCompact(totalPagado)}
-          subtitle={`${filteredExpenses.filter((e) => e.status === 'pagado').length} gastos pagados`}
-          icon={<IconCheck size={22} />}
-          variant="success"
-        />
-        <StatCard
-          title="Total Pendiente"
-          value={formatCurrencyCompact(totalPendiente)}
-          subtitle={`${filteredExpenses.filter((e) => e.status === 'pendiente').length} gastos pendientes`}
-          icon={<IconClock size={22} />}
-          variant="warning"
-        />
+      <div ref={cardsRef} className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="opacity-0">
+          <StatCard
+            title="Total del Período"
+            value={formatCurrencyCompact(totalGeneral)}
+            subtitle={`${filteredExpenses.filter((e) => e.status !== 'anulado').length} gastos registrados`}
+            icon={<IconReceipt size={22} />}
+            variant="default"
+          />
+        </div>
+        <div className="opacity-0">
+          <StatCard
+            title="Total Pagado"
+            value={formatCurrencyCompact(totalPagado)}
+            subtitle={`${filteredExpenses.filter((e) => e.status === 'pagado').length} gastos pagados`}
+            icon={<IconCheck size={22} />}
+            variant="success"
+          />
+        </div>
+        <div className="opacity-0">
+          <StatCard
+            title="Total Pendiente"
+            value={formatCurrencyCompact(totalPendiente)}
+            subtitle={`${filteredExpenses.filter((e) => e.status === 'pendiente').length} gastos pendientes`}
+            icon={<IconClock size={22} />}
+            variant="warning"
+          />
+        </div>
       </div>
 
       {/* Tabla */}
-      <Table<Expense>
-        title={<IconReceipt />}
-        data={expenses}
-        columns={columns}
-        searchPlaceholder="Buscar gasto..."
-        onExport={handleExport}
-        onFilter={handleFilter}
-        pageSize={5}
-      />
+      <div ref={tableRef} className="opacity-0">
+        <Table<Expense>
+          title={<IconReceipt />}
+          data={expenses}
+          columns={columns}
+          searchPlaceholder="Buscar gasto..."
+          onExport={handleExport}
+          onFilter={handleFilter}
+          pageSize={5}
+        />
+      </div>
 
       {/* SlidePanel para Crear/Editar */}
       <SlidePanel

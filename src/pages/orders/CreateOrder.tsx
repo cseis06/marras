@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import {
   IconUser,
   IconChefHat,
@@ -8,6 +8,7 @@ import {
   IconArrowLeft,
 } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
+import gsap from 'gsap';
 import SearchInput, { type SearchOption } from '../../components/ui/SearchInput';
 import DateInput from '../../components/ui/DateInput';
 import Select from '../../components/ui/Select';
@@ -42,6 +43,13 @@ export default function CreateOrderPage() {
   const navigate = useNavigate();
   const [orderNumber] = useState(generateOrderNumber);
 
+  // Refs para animaciones
+  const containerRef = useRef<HTMLDivElement>(null);
+  const backButtonRef = useRef<HTMLButtonElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const sectionsRef = useRef<HTMLDivElement>(null);
+  const summaryRef = useRef<HTMLDivElement>(null);
+
   // Estado del formulario
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
@@ -58,6 +66,46 @@ export default function CreateOrderPage() {
   const [recurrenceDays, setRecurrenceDays] = useState<WeekDay[]>([]);
   const [recurrenceStartDate, setRecurrenceStartDate] = useState('');
   const [recurrenceEndDate, setRecurrenceEndDate] = useState('');
+
+  // Animaciones de entrada
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+      // Animación del botón "Volver"
+      tl.fromTo(
+        backButtonRef.current,
+        { opacity: 0, x: -20 },
+        { opacity: 1, x: 0, duration: 0.4 }
+      );
+
+      // Animación del header (título y descripción)
+      tl.fromTo(
+        headerRef.current,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.5 },
+        '-=0.2'
+      );
+
+      // Animación de las secciones del formulario (stagger)
+      tl.fromTo(
+        sectionsRef.current?.querySelectorAll('section') || [],
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.5, stagger: 0.1 },
+        '-=0.2'
+      );
+
+      // Animación del panel de resumen
+      tl.fromTo(
+        summaryRef.current,
+        { opacity: 0, x: 30, scale: 0.98 },
+        { opacity: 1, x: 0, scale: 1, duration: 0.6 },
+        '-=0.4'
+      );
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, []);
 
   // Convertir clientes a opciones de búsqueda
   const clientOptions: SearchOption[] = useMemo(
@@ -212,8 +260,7 @@ export default function CreateOrderPage() {
     });
 
     setIsSubmitting(false);
-    // navigate('/orders'); // Descomentar cuando exista la ruta
-    alert('¡Pedido creado exitosamente!');
+    alert('Pedido creado exitosamente');
   };
 
   const handleSaveDraft = () => {
@@ -225,28 +272,31 @@ export default function CreateOrderPage() {
   const today = new Date().toISOString().split('T')[0];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div ref={containerRef} className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
           <button
+            ref={backButtonRef}
             onClick={() => navigate("/")}
-            className="flex items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors mb-4"
+            className="flex items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors mb-4 opacity-0"
           >
             <IconArrowLeft size={20} />
             <span className="text-sm">Volver</span>
           </button>
-          <h1 className="text-2xl font-bold text-gray-800">Crear Nuevo Pedido</h1>
-          <p className="text-sm text-gray-500 mt-1">
-            Configura los detalles del pedido y las asignaciones.
-          </p>
+          <div ref={headerRef} className="opacity-0">
+            <h1 className="text-2xl font-bold text-gray-800">Crear Nuevo Pedido</h1>
+            <p className="text-sm text-gray-500 mt-1">
+              Configura los detalles del pedido y las asignaciones.
+            </p>
+          </div>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Columna izquierda - Formulario */}
-          <div className="flex-1 space-y-8">
+          <div ref={sectionsRef} className="flex-1 space-y-8">
             {/* Sección 1: Cliente y Logística */}
-            <section className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            <section className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 opacity-0">
               <div className="flex items-center gap-3 mb-6">
                 <span className="w-8 h-8 flex items-center justify-center bg-emerald-100 text-emerald-600 rounded-full text-sm font-semibold">
                   1
@@ -293,7 +343,7 @@ export default function CreateOrderPage() {
             </section>
 
             {/* Sección 2: Categorías de Platos */}
-            <section className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            <section className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 opacity-0">
               <div className="flex items-center gap-3 mb-6">
                 <span className="w-8 h-8 flex items-center justify-center bg-emerald-100 text-emerald-600 rounded-full text-sm font-semibold">
                   2
@@ -311,7 +361,7 @@ export default function CreateOrderPage() {
             </section>
 
             {/* Sección 3: Recurrencia */}
-            <section className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            <section className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 opacity-0">
               <div className="flex items-center gap-3 mb-6">
                 <span className="w-8 h-8 flex items-center justify-center bg-emerald-100 text-emerald-600 rounded-full text-sm font-semibold">
                   3
@@ -334,7 +384,7 @@ export default function CreateOrderPage() {
             </section>
 
             {/* Sección 4: Asignaciones */}
-            <section className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            <section className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 opacity-0">
               <div className="flex items-center gap-3 mb-6">
                 <span className="w-8 h-8 flex items-center justify-center bg-emerald-100 text-emerald-600 rounded-full text-sm font-semibold">
                   4
@@ -376,7 +426,7 @@ export default function CreateOrderPage() {
             </section>
 
             {/* Sección 5: Notas del Pedido */}
-            <section className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            <section className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 opacity-0">
               <div className="flex items-center gap-3 mb-6">
                 <span className="w-8 h-8 flex items-center justify-center bg-emerald-100 text-emerald-600 rounded-full text-sm font-semibold">
                   5
@@ -399,7 +449,7 @@ export default function CreateOrderPage() {
 
           {/* Columna derecha - Resumen */}
           <div className="lg:w-96">
-            <div className="sticky top-8">
+            <div ref={summaryRef} className="sticky top-8 opacity-0">
               <OrderSummary
                 orderNumber={orderNumber}
                 client={selectedClient}

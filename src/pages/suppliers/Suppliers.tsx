@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useRef, useEffect } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
 import {
   IconEdit,
@@ -9,6 +9,7 @@ import {
   IconMail,
   IconPhone,
 } from '@tabler/icons-react';
+import gsap from 'gsap';
 import Table from '../../components/ui/Table';
 import Badge from '../../components/ui/Badge';
 import Button from '../../components/ui/Button';
@@ -41,6 +42,13 @@ const categoryConfig: Record<SupplierCategory, { label: string }> = {
 export default function Suppliers() {
   const navigate = useNavigate();
 
+  // Refs para animaciones
+  const containerRef = useRef<HTMLDivElement>(null);
+  const backButtonRef = useRef<HTMLButtonElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const createButtonRef = useRef<HTMLDivElement>(null);
+  const tableRef = useRef<HTMLDivElement>(null);
+
   // Estado de datos
   const [suppliers, setSuppliers] = useState<Supplier[]>(initialSuppliers);
 
@@ -53,6 +61,46 @@ export default function Suppliers() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [supplierToDelete, setSupplierToDelete] = useState<Supplier | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // Animaciones de entrada
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+      // Animación del botón "Volver"
+      tl.fromTo(
+        backButtonRef.current,
+        { opacity: 0, x: -20 },
+        { opacity: 1, x: 0, duration: 0.4 }
+      );
+
+      // Animación del header (título y descripción)
+      tl.fromTo(
+        headerRef.current,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.5 },
+        '-=0.2'
+      );
+
+      // Animación del botón "Nuevo Proveedor"
+      tl.fromTo(
+        createButtonRef.current,
+        { opacity: 0, scale: 0.9 },
+        { opacity: 1, scale: 1, duration: 0.4 },
+        '-=0.3'
+      );
+
+      // Animación de la tabla
+      tl.fromTo(
+        tableRef.current,
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.6 },
+        '-=0.2'
+      );
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, []);
 
   // Handlers del SlidePanel
   const handleCreate = () => {
@@ -209,43 +257,50 @@ export default function Suppliers() {
   );
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-2 lg:px-6 py-8">
+    <div ref={containerRef} className="max-w-7xl mx-auto px-4 sm:px-2 lg:px-6 py-8">
       {/* Header con botón crear */}
       <div className="flex items-center justify-between">
         {/* Header */}
         <div className="mb-6">
           <button
+            ref={backButtonRef}
             onClick={() => navigate('/')}
-            className="flex items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors mb-4"
+            className="flex items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors mb-4 opacity-0"
           >
             <IconArrowLeft size={20} />
             <span className="text-sm">Volver</span>
           </button>
-          <h1 className="text-2xl font-bold text-gray-800">Gestión de Proveedores</h1>
-          <p className="text-sm text-gray-500 mt-1">
-            Administra la información de tus proveedores
-          </p>
+          <div ref={headerRef} className="opacity-0">
+            <h1 className="text-2xl font-bold text-gray-800">Gestión de Proveedores</h1>
+            <p className="text-sm text-gray-500 mt-1">
+              Administra la información de tus proveedores
+            </p>
+          </div>
         </div>
-        <Button
-          variant="gradient"
-          icon={<IconPlus size={18} />}
-          onClick={handleCreate}
-          className="max-w-50 text-sm!"
-        >
-          Nuevo Proveedor
-        </Button>
+        <div ref={createButtonRef} className="opacity-0">
+          <Button
+            variant="gradient"
+            icon={<IconPlus size={18} />}
+            onClick={handleCreate}
+            className="max-w-50 text-sm!"
+          >
+            Nuevo Proveedor
+          </Button>
+        </div>
       </div>
 
       {/* Tabla */}
-      <Table<Supplier>
-        title={<IconTruckDelivery />}
-        data={suppliers}
-        columns={columns}
-        searchPlaceholder="Buscar proveedor..."
-        onExport={handleExport}
-        onFilter={handleFilter}
-        pageSize={5}
-      />
+      <div ref={tableRef} className="opacity-0">
+        <Table<Supplier>
+          title={<IconTruckDelivery />}
+          data={suppliers}
+          columns={columns}
+          searchPlaceholder="Buscar proveedor..."
+          onExport={handleExport}
+          onFilter={handleFilter}
+          pageSize={5}
+        />
+      </div>
 
       {/* SlidePanel para Crear/Editar */}
       <SlidePanel
