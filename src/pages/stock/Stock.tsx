@@ -408,40 +408,46 @@ export default function Stock() {
   );
 
   return (
-    <div ref={containerRef} className="max-w-7xl mx-auto px-4 sm:px-2 lg:px-6 py-8">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+    <div ref={containerRef} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+      {/* Header con botón crear - responsive */}
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
+        {/* Header con título y botón volver */}
         <div>
           <button
             ref={backButtonRef}
             onClick={() => navigate('/')}
-            className="flex items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors mb-4 opacity-0"
+            className="flex items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors mb-3 sm:mb-4 opacity-0"
           >
             <IconArrowLeft size={20} />
             <span className="text-sm">Volver</span>
           </button>
           <div ref={headerRef} className="opacity-0">
-            <h1 className="text-2xl font-bold text-gray-800">Gestión de Stock</h1>
-            <p className="text-sm text-gray-500 mt-1">
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Gestión de Stock</h1>
+            <p className="text-xs sm:text-sm text-gray-500 mt-1">
               Administra el inventario, registra entradas y salidas de productos
             </p>
           </div>
         </div>
-        <div ref={createButtonRef} className="opacity-0">
+
+        {/* Botón de crear - responsive */}
+        <div ref={createButtonRef} className="opacity-0 flex-shrink-0">
           <Button
             variant="gradient"
             icon={<IconPlus size={18} />}
             onClick={handleCreateProduct}
-            className="max-w-50 text-sm!"
+            className="w-full sm:w-auto text-sm!"
           >
-            Nuevo Producto
+            <span className="sm:inline">Nuevo Producto</span>
           </Button>
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div ref={cardsRef} className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-6">
-        <div className="opacity-0">
+      {/* Stats Cards - responsive grid */}
+      <div 
+        ref={cardsRef} 
+        className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-6"
+      >
+        <div className="opacity-0 col-span-1">
           <StatCard
             title="Total Productos"
             value={stats.total}
@@ -449,7 +455,7 @@ export default function Stock() {
             variant="default"
           />
         </div>
-        <div className="opacity-0">
+        <div className="opacity-0 col-span-1">
           <StatCard
             title="Disponible"
             value={stats.disponible}
@@ -457,7 +463,7 @@ export default function Stock() {
             variant="success"
           />
         </div>
-        <div className="opacity-0">
+        <div className="opacity-0 col-span-1">
           <StatCard
             title="Stock Bajo"
             value={stats.bajo}
@@ -465,7 +471,7 @@ export default function Stock() {
             variant="warning"
           />
         </div>
-        <div className="opacity-0">
+        <div className="opacity-0 col-span-1">
           <StatCard
             title="Crítico"
             value={stats.critico}
@@ -473,7 +479,7 @@ export default function Stock() {
             variant="error"
           />
         </div>
-        <div className="opacity-0">
+        <div className="opacity-0 col-span-1">
           <StatCard
             title="Agotado"
             value={stats.agotado}
@@ -481,14 +487,14 @@ export default function Stock() {
             variant="default"
           />
         </div>
-        {/*<div className="opacity-0 col-span-2 md:col-span-1">
+        {/* Comentado: <div className="opacity-0 col-span-2 md:col-span-1">
           <StatCard
             title="Valor Total"
             value={formatCurrency(stats.valorTotal)}
             icon={<IconPackage size={20} />}
             variant="info"
           />
-        </div>*/}
+        </div> */}
       </div>
 
       {/* Tabla */}

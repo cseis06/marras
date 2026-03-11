@@ -1,10 +1,11 @@
-import { useState, type FC } from "react";
+import { useState, useEffect, type FC } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   IconPlus,
   IconMinus,
   IconChevronLeft,
   IconChevronRight,
+  IconX,
 } from "@tabler/icons-react";
 import { sidebarData, type SidebarItem, type SidebarSubItem } from "./data/Sidebar";
 
@@ -12,6 +13,8 @@ interface SidebarProps {
   onAdd?: (itemId: string) => void;
   title?: string;
   className?: string;
+  isMobileOpen?: boolean;
+  onMobileClose?: () => void;
 }
 
 const SubItem: FC<{
@@ -113,6 +116,8 @@ export const Sidebar: FC<SidebarProps> = ({
   onAdd,
   title,
   className = "",
+  isMobileOpen = false,
+  onMobileClose,
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -120,6 +125,26 @@ export const Sidebar: FC<SidebarProps> = ({
 
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const [isCollapsed, setIsCollapsed] = useState(false);
+
+  // Cerrar sidebar mobile al cambiar de ruta
+  useEffect(() => {
+    if (isMobileOpen && onMobileClose) {
+      onMobileClose();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
+
+  // Prevenir scroll del body cuando el sidebar mobile está abierto
+  useEffect(() => {
+    if (isMobileOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMobileOpen]);
 
   const toggleExpand = (itemId: string) => {
     setExpandedItems((prev) => {
@@ -140,13 +165,9 @@ export const Sidebar: FC<SidebarProps> = ({
   const mainItems = sidebarData.sections[0]?.items.filter((item) => item.id !== "log-out") || [];
   const logOutItem = sidebarData.sections[0]?.items.find((item) => item.id === "log-out");
 
-  return (
-    <aside
-      className={`
-        h-screen bg-white border-r border-gray-200 flex flex-col shadow-sm
-        transition-all duration-300 ${isCollapsed ? "w-16" : "w-64"} ${className}
-      `}
-    >
+  // Contenido del sidebar (reutilizado para desktop y mobile)
+  const sidebarContent = (
+    <>
       {/* Header */}
       <div
         className={`
@@ -159,11 +180,19 @@ export const Sidebar: FC<SidebarProps> = ({
             <h1 className="text-base font-semibold text-gray-800">
               {title || sidebarData.title}
             </h1>
+            {/* Botón colapsar solo en desktop */}
             <button
               onClick={() => setIsCollapsed(true)}
-              className="p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-500"
+              className="hidden lg:block p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-500"
             >
               <IconChevronLeft size={18} stroke={1.5} />
+            </button>
+            {/* Botón cerrar solo en mobile */}
+            <button
+              onClick={onMobileClose}
+              className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-500"
+            >
+              <IconX size={18} stroke={1.5} />
             </button>
           </>
         ) : (
@@ -204,7 +233,40 @@ export const Sidebar: FC<SidebarProps> = ({
           />
         )}
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Desktop Sidebar */}
+      <aside
+        className={`
+          hidden lg:flex h-screen bg-white border-r border-gray-200 flex-col shadow-sm
+          transition-all duration-300 ${isCollapsed ? "w-16" : "w-64"} ${className}
+        `}
+      >
+        {sidebarContent}
+      </aside>
+
+      {/* Mobile Overlay */}
+      {isMobileOpen && (
+        <div
+          className="lg:hidden fixed inset-0 bg-black/50 z-40 transition-opacity"
+          onClick={onMobileClose}
+        />
+      )}
+
+      {/* Mobile Sidebar (Drawer) */}
+      <aside
+        className={`
+          lg:hidden fixed inset-y-0 left-0 z-50 w-72 bg-white shadow-xl flex flex-col
+          transform transition-transform duration-300 ease-in-out
+          ${isMobileOpen ? "translate-x-0" : "-translate-x-full"}
+        `}
+      >
+        {sidebarContent}
+      </aside>
+    </>
   );
 };
 

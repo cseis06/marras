@@ -283,32 +283,32 @@ export default function Employees() {
   );
 
   return (
-    <div ref={containerRef} className="max-w-7xl mx-auto px-4 sm:px-2 lg:px-6 py-8">
+    <div ref={containerRef} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
       {/* Header con botón crear */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
         {/* Header */}
-        <div className="mb-6">
+        <div>
           <button
             ref={backButtonRef}
             onClick={() => navigate('/')}
-            className="flex items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors mb-4 opacity-0"
+            className="flex items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors mb-3 sm:mb-4 opacity-0"
           >
             <IconArrowLeft size={20} />
             <span className="text-sm">Volver</span>
           </button>
           <div ref={headerRef} className="opacity-0">
-            <h1 className="text-2xl font-bold text-gray-800">Gestiona a los Empleados</h1>
-            <p className="text-sm text-gray-500 mt-1">
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Gestiona a los Empleados</h1>
+            <p className="text-xs sm:text-sm text-gray-500 mt-1">
               Administra empleados y servicios contratados del negocio
             </p>
           </div>
         </div>
-        <div ref={createButtonRef} className="opacity-0">
+        <div ref={createButtonRef} className="opacity-0 flex-shrink-0">
           <Button
             variant="gradient"
             icon={<IconPlus size={18} />}
             onClick={handleCreate}
-            className="max-w-50 text-sm!"
+            className="w-full sm:w-auto text-sm!"
           >
             Nuevo Empleado
           </Button>

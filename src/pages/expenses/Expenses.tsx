@@ -401,27 +401,29 @@ export default function Expenses() {
   };
 
   return (
-    <div ref={containerRef} className="flex flex-col gap-6 max-w-7xl mx-auto px-4 sm:px-2 lg:px-6 py-8">
-      {/* Header con botón crear */}
-      <div className="flex items-start justify-between">
-        {/* Header */}
+    <div ref={containerRef} className="flex flex-col gap-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+      {/* Header con botón crear - responsive */}
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+        {/* Header con título y botón volver */}
         <div>
           <button
             ref={backButtonRef}
             onClick={() => navigate('/')}
-            className="flex items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors mb-4 opacity-0"
+            className="flex items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors mb-3 sm:mb-4 opacity-0"
           >
             <IconArrowLeft size={20} />
             <span className="text-sm">Volver</span>
           </button>
           <div ref={headerRef} className="opacity-0">
-            <h1 className="text-2xl font-bold text-gray-800">Gestión de Gastos</h1>
-            <p className="text-sm text-gray-500 mt-1">
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Gestión de Gastos</h1>
+            <p className="text-xs sm:text-sm text-gray-500 mt-1">
               Registra y administra los gastos del negocio
             </p>
           </div>
         </div>
-        <div ref={actionsRef} className="flex flex-col items-end gap-2 opacity-0">
+
+        {/* Acciones (PeriodSelector + botón) - responsive */}
+        <div ref={actionsRef} className="flex flex-col sm:items-end gap-2 opacity-0 w-full sm:w-auto">
           <PeriodSelector
             value={selectedPeriod}
             onChange={setSelectedPeriod}
@@ -431,16 +433,16 @@ export default function Expenses() {
             variant="gradient"
             icon={<IconPlus size={18} />}
             onClick={handleCreate}
-            className="max-w-50 text-sm!"
+            className="w-full sm:w-auto text-sm!"
           >
-            Nuevo Gasto
+            <span className="sm:inline">Nuevo Gasto</span>
           </Button>
         </div>
       </div>
 
-      {/* Cards de resumen */}
-      <div ref={cardsRef} className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="opacity-0">
+      {/* Cards de resumen - responsive grid */}
+      <div ref={cardsRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+        <div className="opacity-0 col-span-1">
           <StatCard
             title="Total del Período"
             value={formatCurrencyCompact(totalGeneral)}
@@ -449,7 +451,7 @@ export default function Expenses() {
             variant="default"
           />
         </div>
-        <div className="opacity-0">
+        <div className="opacity-0 col-span-1">
           <StatCard
             title="Total Pagado"
             value={formatCurrencyCompact(totalPagado)}
@@ -458,7 +460,7 @@ export default function Expenses() {
             variant="success"
           />
         </div>
-        <div className="opacity-0">
+        <div className="opacity-0 col-span-1">
           <StatCard
             title="Total Pendiente"
             value={formatCurrencyCompact(totalPendiente)}
