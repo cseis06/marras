@@ -3,10 +3,8 @@ import {
   IconShoppingCart,
   IconCash,
   IconReceipt,
-  IconRepeat,
   IconCircleCheck,
   IconCircleX,
-  IconClock,
   IconArrowLeft,
   IconRefresh,
 } from '@tabler/icons-react';
@@ -355,7 +353,7 @@ export default function OrdersDashboard() {
           <div className="opacity-0">
             <StatCard
               title="Ticket Promedio"
-              value={formatCurrency(stats.averageTicket)}
+              value={formatCurrency(stats.averageOrderValue)}
               subtitle="Por pedido"
               icon={<IconReceipt size={20} />}
               variant="info"
@@ -373,8 +371,8 @@ export default function OrdersDashboard() {
           <div className="opacity-0">
             <StatCard
               title="Cancelados"
-              value={stats.canceledOrders}
-              subtitle={`${stats.totalOrders > 0 ? ((stats.canceledOrders / stats.totalOrders) * 100).toFixed(0) : 0}% del total`}
+              value={stats.cancelledOrders}
+              subtitle={`${stats.totalOrders > 0 ? ((stats.cancelledOrders / stats.totalOrders) * 100).toFixed(0) : 0}% del total`}
               icon={<IconCircleX size={20} />}
               variant="error"
             />

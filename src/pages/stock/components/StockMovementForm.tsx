@@ -264,7 +264,7 @@ export default function StockMovementForm({
       <div className="flex-shrink-0 flex gap-3 pt-4 mt-4 border-t border-gray-100">
         <Button
           type="button"
-          variant="outline"
+          variant="outlined"
           onClick={onCancel}
           disabled={loading}
           icon={<IconX size={18} />}
@@ -274,7 +274,7 @@ export default function StockMovementForm({
         </Button>
         <Button
           type="submit"
-          variant={type === 'entrada' ? 'primary' : 'danger'}
+          variant='filled'
           loading={loading}
           icon={type === 'entrada' ? <IconPackageImport size={18} /> : <IconPackageExport size={18} />}
           className="flex-1"

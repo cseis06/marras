@@ -124,7 +124,7 @@ const chefCategoryAssignments: Record<string, string[]> = {
 const generateCategoryAssignments = (chefId: string, date: string): CategoryAssignment[] => {
   const categoryIds = chefCategoryAssignments[chefId] || [];
   
-  return categoryIds.map((catId, index) => {
+  return categoryIds.map((catId) => {
     const category = categories.find((c) => c.id === catId);
     const quantity = Math.floor(Math.random() * 30) + 10; // 10-40 platos
     const completionRate = date === getDateString(0) 

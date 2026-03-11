@@ -16,8 +16,8 @@ import StatCard from '../../components/ui/StatCard';
 import Select from '../../components/ui/Select';
 
 // Componentes locales
-import CategoryPostIt from './components/CategoryPostit';
-import CustomOrderPostIt from './components/CustomOrderPostit';
+import CategoryPostIt from './components/CategoryPostIt';
+import CustomOrderPostIt from './components/CustomOrderPostIt';
 
 // Datos y helpers
 import {

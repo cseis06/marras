@@ -20,6 +20,7 @@ interface SelectProps {
   required?: boolean;
   className?: string;
   name?: string;
+  error?: string;
 }
 
 export default function Select({
@@ -34,6 +35,7 @@ export default function Select({
   required = false,
   className = '',
   name,
+  error
 }: SelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
@@ -100,6 +102,10 @@ export default function Select({
         break;
     }
   };
+
+  if (error) {
+    console.error(error)
+  }
 
   return (
     <div ref={containerRef} className={`relative w-full ${className}`}>

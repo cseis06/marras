@@ -1,3 +1,4 @@
+import { IconRefresh } from '@tabler/icons-react';
 import { forwardRef } from 'react';
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
@@ -7,6 +8,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   iconPosition?: 'left' | 'right';
   bgColor?: string;
   textColor?: string;
+  loading?: boolean;
 }
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -19,6 +21,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       textColor = 'text-white',
       className = '',
       children,
+      loading = false,
+      disabled,
       ...props
     },
     ref
@@ -31,15 +35,24 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       gradient: 'bg-linear-90 from-emerald-800 via-green-500 to-lime-400 text-white',
     };
 
+    const isDisabled = disabled || loading;
+
     return (
       <button
         ref={ref}
-        className={`${baseStyles} ${variantStyles[variant]} ${className}`}
+        className={`${baseStyles} ${variantStyles[variant]} ${isDisabled ? 'opacity-50 cursor-not-allowed active:scale-100' : ''} ${className}`}
+        disabled={isDisabled}
         {...props}
       >
-        {icon && iconPosition === 'left' && <span className="flex-shrink-0">{icon}</span>}
-        {children}
-        {icon && iconPosition === 'right' && <span className="flex-shrink-0">{icon}</span>}
+        {loading ? (
+          <IconRefresh />
+        ) : (
+          <>
+            {icon && iconPosition === 'left' && <span className="flex-shrink-0">{icon}</span>}
+            {children}
+            {icon && iconPosition === 'right' && <span className="flex-shrink-0">{icon}</span>}
+          </>
+        )}
       </button>
     );
   }
